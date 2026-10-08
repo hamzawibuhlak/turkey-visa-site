@@ -1,3 +1,4 @@
+# Public Pages deployment
 name: Deploy public site
 on:
   push:
