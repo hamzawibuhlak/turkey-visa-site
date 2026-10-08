@@ -18,7 +18,7 @@
 
 .pdf-status{display:none;margin:10px 0 0;padding:10px 12px;border-radius:13px;background:#eef5ff;border:1px solid #d8e7fb;color:#315b88;font-size:10.5px;line-height:1.7}.pdf-status.show{display:block}.pdf-status.error{background:#fff0f1;border-color:#f1cdd0;color:#9d2730}.primary[disabled]{opacity:.62;cursor:wait}
 @media(max-width:620px){.shell{width:min(100% - 16px,820px)}.topbar{top:6px;border-radius:18px}.grid{grid-template-columns:1fr}.section{padding:14px;border-radius:18px}.hero{border-radius:22px;padding:19px 16px}.hero h1{font-size:25px}.line{grid-template-columns:1fr;gap:2px;padding:7px 0}.line .value{padding-inline-start:8px}.visa-table{display:block;overflow-x:auto;white-space:nowrap}.actions{bottom:6px}.preview-card{padding:14px}.preview-actions{flex-wrap:wrap}}
-@media print{body{background:#fff}.shell{width:100%;padding:0}.topbar,.hero,.privacy,#editor,.preview-actions,.small-note,.preview-head{display:none!important}#preview{display:block!important}.preview-card{margin:0;border:0;border-radius:0;box-shadow:none;padding:0}#officialCanvas{width:100%!important;border:0!important}}
+@media print{body{background:#fff}.shell{width:100%;padding:0}.topbar,.hero,.privacy,#editor,.preview-actions,.small-note{display:none!important}#preview{display:block!important}.preview-card{margin:0;border:0;border-radius:0;box-shadow:none;padding:0}.preview-badge{display:none}.line{font-size:9.5px;padding:3.5px 0}.preview-head h1{font-size:18px}.visa-history{font-size:8px}.declaration{font-size:8px}}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -92,11 +92,14 @@
 
   <div id="preview">
     <div class="preview-card">
-      <div class="preview-head"><h1>VISA APPLICATION FORM</h1><span class="preview-badge">معاينة النموذج قبل الطباعة</span></div>
-      <canvas id="officialCanvas" aria-label="معاينة النموذج الرسمي المعبأ" style="display:block;width:100%;height:auto;background:#fff;border:1px solid #ddd"></canvas>
+      <div class="preview-head"><h1>VISA APPLICATION FORM</h1><span class="preview-badge" data-i18n="draftBadge">معاينة احتياطية للبيانات</span></div>
+      <div class="form-lines" id="previewLines"></div>
+      <table class="visa-history"><thead><tr><th>Country</th><th>Duration</th><th>Date From</th><th>Date To</th><th>City of Entry</th></tr></thead><tbody id="previewHistory"></tbody></table>
+      <div class="declaration"><strong>I/We, the undersigned, hereby declare that:</strong><br><span>This draft is provided to help transfer your information to the official application form. Please review all details against the official form before submission.</span></div>
+      <div class="signature"><div><div class="sigline" id="sigName"></div><div>APPLICANT NAME SURNAME</div></div><div><div class="sigline"></div><div>SIGNATURE</div></div></div>
     </div>
-    <div class="preview-actions"><button class="print-btn" id="exportPdfBtn" type="button">فتح PDF للطباعة</button><button class="edit-btn" id="editBtn" type="button" data-i18n="edit">تعديل البيانات</button><a class="pdf-btn" target="_blank" rel="noopener noreferrer" href="https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf" data-i18n="officialPdf">فتح النموذج الرسمي PDF</a></div>
-    <div class="small-note">المعاينة أعلاه هي نسخة صورة من النموذج الرسمي مع بياناتك فوقها. عند الضغط على «فتح PDF للطباعة» سيتم إنشاء PDF مطابق للمعاينة.</div>
+    <div class="preview-actions"><button class="print-btn" onclick="window.print()" data-i18n="print">طباعة / حفظ PDF</button><button class="edit-btn" id="editBtn" data-i18n="edit">تعديل البيانات</button><a class="pdf-btn" target="_blank" rel="noopener noreferrer" href="https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf" data-i18n="officialPdf">فتح النموذج الرسمي PDF</a></div>
+    <div class="small-note" data-i18n="previewNote">هذه الصفحة مساعدة لتجهيز البيانات وليست بديلاً عن النموذج الرسمي. راجع البيانات ثم انقلها/اطبعها حسب متطلبات مركز التقديم.</div>
   </div>
 </div>
 <script>
@@ -135,142 +138,13 @@ function fmtPdfDate(x){return fmtDate(x)}
 function makeTextTools(page,font,bold,width,height){
   function fit(txt,maxWidth,size=7,min=4.7,f=font){txt=cleanPdfText(txt);if(!txt)return {txt:'',size};let s=size;while(s>min&&f.widthOfTextAtSize(txt,s)>maxWidth)s-=.25;if(f.widthOfTextAtSize(txt,s)<=maxWidth)return {txt,size:s};let out=txt;while(out.length>2&&f.widthOfTextAtSize(out+'…',s)>maxWidth)out=out.slice(0,-1);return {txt:out+'…',size:s}}
   function draw(x,y,txt,maxWidth=width-x-18,size=7,f=font){if(!txt)return;let q=fit(txt,Math.max(18,maxWidth),size,4.7,f);page.drawText(q.txt,{x,y,size:q.size,font:f,color:PDFLib.rgb(.08,.08,.1)})}
-  function mark(x,y){page.drawText('X',{x,y,size:8,font:bold,color:PDFLib.rgb(.72,.08,.12)})}
+  function mark(x,y){
+    const color=PDFLib.rgb(.72,.08,.12);
+    page.drawLine({start:{x:x,y:y+1.5},end:{x:x+2.2,y:y-0.7},thickness:1.15,color});
+    page.drawLine({start:{x:x+2.2,y:y-0.7},end:{x:x+6.4,y:y+4.7},thickness:1.15,color});
+  }
   return {draw,mark};
 }
-
-let rasterPreviewState={data:null,jpeg:null,pageWidth:595.28,pageHeight:841.89};
-
-function canvasText(ctx,scale,x,y,text,maxWidth=250,size=6.2,bold=false){
-  text=cleanPdfText(text); if(!text)return;
-  ctx.save();
-  ctx.fillStyle='#111';
-  ctx.textBaseline='alphabetic';
-  let s=size;
-  ctx.font=(bold?'700 ':'')+(s*scale)+'px Arial, Helvetica, sans-serif';
-  while(s>4.6 && ctx.measureText(text).width>maxWidth*scale){
-    s-=0.2; ctx.font=(bold?'700 ':'')+(s*scale)+'px Arial, Helvetica, sans-serif';
-  }
-  let out=text;
-  while(out.length>2 && ctx.measureText(out).width>maxWidth*scale) out=out.slice(0,-1);
-  if(out!==text)out+='…';
-  ctx.fillText(out,x*scale,y*scale);
-  ctx.restore();
-}
-function canvasCheck(ctx,scale,x,y,enabled){
-  if(!enabled)return;
-  ctx.save();
-  ctx.strokeStyle='#b51222'; ctx.lineWidth=Math.max(1.25,1.15*scale); ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.beginPath();
-  ctx.moveTo((x-1.0)*scale,(y+0.8)*scale);
-  ctx.lineTo((x+0.7)*scale,(y+2.5)*scale);
-  ctx.lineTo((x+4.8)*scale,(y-2.5)*scale);
-  ctx.stroke(); ctx.restore();
-}
-async function buildRasterPreview(d){
-  if(hasArabicText(d))throw new Error(lang==='ar'?'لإنشاء النسخة الرسمية المعبأة، اكتب بيانات الحقول بالأحرف الإنجليزية ثم أعد المحاولة. واجهة الصفحة يمكن أن تبقى بالعربية.':'To create the filled official PDF, enter the field values using English/Latin characters, then try again.');
-  const res=await fetch(OFFICIAL_PDF_URL,{mode:'cors',cache:'no-store'});
-  if(!res.ok)throw new Error('Unable to load the official PDF');
-  const ab=await res.arrayBuffer();
-  const doc=await pdfjsLib.getDocument({data:new Uint8Array(ab)}).promise;
-  const page=await doc.getPage(1);
-  const base=page.getViewport({scale:1});
-  const pageW=base.width,pageH=base.height;
-  const renderScale=2.55;
-  const vp=page.getViewport({scale:renderScale});
-  const canvas=document.getElementById('officialCanvas');
-  canvas.width=Math.round(vp.width); canvas.height=Math.round(vp.height);
-  const ctx=canvas.getContext('2d',{alpha:false});
-  await page.render({canvasContext:ctx,viewport:vp,background:'#fff'}).promise;
-  const s=vp.width/pageW;
-
-  // Text fields - coordinates are in the rendered page's top-left coordinate system.
-  canvasText(ctx,s,284,63,d.fullName,250,6.6,true);
-  canvasText(ctx,s,284,81,d.fatherName,105,6.1);
-  canvasText(ctx,s,425,81,d.motherName,105,6.1);
-  canvasText(ctx,s,284,99,d.ksaAddress,270,6.0);
-  canvasText(ctx,s,284,117,[d.mobile,d.email].filter(Boolean).join(' / '),280,5.5);
-
-  canvasCheck(ctx,s,277,133,d.entryType==='Single Entry');
-  canvasCheck(ctx,s,365,133,d.entryType==='Multiple Entry');
-  canvasCheck(ctx,s,456,133,d.entryType==='Double Entry');
-
-  canvasText(ctx,s,284,156,d.purpose,270,6.0);
-  canvasText(ctx,s,284,174,d.nationality,270,6.0);
-  canvasText(ctx,s,306,199,d.residentId,92,5.6);
-  canvasText(ctx,s,483,199,fmtPdfDate(d.residentExpiry),72,5.6);
-  canvasText(ctx,s,284,211,d.birthPlace,270,6.0);
-
-  canvasCheck(ctx,s,277,227,d.marital==='Single');
-  canvasCheck(ctx,s,374,227,d.marital==='Married');
-  canvasText(ctx,s,284,247,d.ksaDuration,270,5.8);
-
-  canvasCheck(ctx,s,277,268,d.expenses==='Applicant');
-  canvasCheck(ctx,s,277,279,d.expenses==='Sponsor');
-  if(d.expenses==='Sponsor')canvasText(ctx,s,356,279,d.sponsorName,195,5.6);
-
-  canvasText(ctx,s,284,296,d.occupation,270,5.8);
-  // 14 and 15 are intentionally left blank for VFS staff.
-  canvasText(ctx,s,284,352,d.company,270,5.8);
-  canvasText(ctx,s,284,371,d.workDuration,270,5.8);
-
-  canvasCheck(ctx,s,277,400,d.property==='No');
-  canvasCheck(ctx,s,304,400,d.property==='Yes');
-  if(d.property==='Yes')canvasText(ctx,s,354,400,d.propertyDetails,198,5.5);
-
-  canvasText(ctx,s,355,414,fmtPdfDate(d.departure),95,5.5);
-  canvasText(ctx,s,355,433,fmtPdfDate(d.arrival),95,5.5);
-  canvasText(ctx,s,284,445,d.stayPlace,270,5.8);
-
-  canvasCheck(ctx,s,277,475,d.travellingWith==='No');
-  canvasCheck(ctx,s,304,475,d.travellingWith==='Yes');
-  if(d.travellingWith==='Yes')canvasText(ctx,s,354,475,d.travellingDetails,198,5.5);
-
-  canvasCheck(ctx,s,277,497,d.ksaRelatives==='No');
-  canvasCheck(ctx,s,304,497,d.ksaRelatives==='Yes');
-  if(d.ksaRelatives==='Yes')canvasText(ctx,s,354,497,d.ksaRelativesDetails,198,5.5);
-
-  canvasCheck(ctx,s,277,518,d.turkishRelatives==='No');
-  canvasCheck(ctx,s,304,518,d.turkishRelatives==='Yes');
-  if(d.turkishRelatives==='Yes')canvasText(ctx,s,354,518,d.turkishRelativesDetails,198,5.5);
-
-  canvasCheck(ctx,s,277,539,d.oldPassport==='No');
-  canvasCheck(ctx,s,304,539,d.oldPassport==='Yes');
-  if(d.oldPassport==='Yes')canvasText(ctx,s,382,539,d.oldPassportNumber,168,5.5);
-
-  const hy=[589,603,617];
-  (d.history||[]).slice(0,3).forEach((r,i)=>{
-    canvasText(ctx,s,35,hy[i],r.country,175,5.4);
-    canvasText(ctx,s,218,hy[i],r.duration,75,5.4);
-    canvasText(ctx,s,303,hy[i],fmtPdfDate(r.from),76,5.0);
-    canvasText(ctx,s,387,hy[i],fmtPdfDate(r.to),76,5.0);
-    canvasText(ctx,s,470,hy[i],r.city,105,5.4);
-  });
-
-  // Applicant name near signature area at the bottom of the official form.
-  canvasText(ctx,s,87,786,d.fullName,180,6.0,true);
-
-  rasterPreviewState={data:d,jpeg:canvas.toDataURL('image/jpeg',0.94),pageWidth:pageW,pageHeight:pageH};
-  return rasterPreviewState;
-}
-async function openRasterPdf(){
-  try{
-    if(!rasterPreviewState.jpeg)throw new Error('Create the preview first');
-    const pdf=await PDFLib.PDFDocument.create();
-    const img=await pdf.embedJpg(rasterPreviewState.jpeg);
-    const pg=pdf.addPage([rasterPreviewState.pageWidth,rasterPreviewState.pageHeight]);
-    pg.drawImage(img,{x:0,y:0,width:rasterPreviewState.pageWidth,height:rasterPreviewState.pageHeight});
-    const bytes=await pdf.save();
-    const blob=new Blob([bytes],{type:'application/pdf'});
-    const url=URL.createObjectURL(blob);
-    window.open(url,'_blank');
-    setTimeout(()=>URL.revokeObjectURL(url),300000);
-  }catch(err){
-    console.error(err);
-    statusMsg((lang==='ar'?'تعذر إنشاء PDF للطباعة: ':'Could not create printable PDF: ')+(err?.message||''),true);
-  }
-}
-
 async function generateFilledOfficialPdf(d){
   if(!window.PDFLib||!window.pdfjsLib)throw new Error('PDF libraries are not available');
   if(hasArabicText(d))throw new Error(lang==='ar'?'لإنشاء النسخة الرسمية المعبأة، اكتب بيانات الحقول بالأحرف الإنجليزية ثم أعد المحاولة. واجهة الصفحة يمكن أن تبقى بالعربية.':'To create the filled official PDF, enter the field values using English/Latin characters, then try again.');
@@ -368,26 +242,52 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Address in KSA',d.ksaAddress,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer(['Mobile Number & Email Address','Mobile Number'],[d.mobile,d.email].filter(Boolean).join(' / '),{xFrac:.49,maxWidth:width*.43,size:6.4});
 
-  // Fixed official-form checkbox coordinates (May 2026 form).
-  // These are more reliable than PDF text-token matching because the checkbox labels
-  // are split differently by PDF.js on some browsers/devices.
-  const REF_W=595.28, REF_H=841.89;
-  const sx=width/REF_W, sy=height/REF_H;
-  function checkFixed(x,y,enabled){
-    if(!enabled)return;
-    const X=x*sx, Y=y*sy;
-    page.drawLine({start:{x:X-1.0,y:Y+0.8},end:{x:X+0.7,y:Y-1.0},thickness:1.15,color:PDFLib.rgb(.72,.08,.12)});
-    page.drawLine({start:{x:X+0.7,y:Y-1.0},end:{x:X+3.7,y:Y+3.0},thickness:1.15,color:PDFLib.rgb(.72,.08,.12)});
-    placedAny=true;
+  // Checkbox placement is anchored to the actual text in each numbered row.
+  // This avoids hard-coded Y coordinates and keeps the original PDF unchanged.
+  function rowAnchor(rowNum){
+    const re=new RegExp('^'+rowNum+'\\.');
+    return items.filter(it=>re.test(it.n)).sort((a,b)=>a.yTop-b.yTop||a.x-b.x)[0]||null;
   }
-  function drawFixed(x,y,value,maxWidth=160,size=6.4,isBold=false){
-    if(!value)return;draw(x*sx,y*sy,value,maxWidth*sx,size,isBold?bold:font);placedAny=true
+  function rowBandItems(rowNum){
+    const a=rowAnchor(rowNum); if(!a)return [];
+    const next=rowAnchor(rowNum+1);
+    const top=a.yTop-3;
+    const bottom=next?next.yTop-2:a.yTop+34;
+    return items.filter(it=>it.yTop>=top&&it.yTop<bottom);
+  }
+  function rowBandToken(rowNum,needles,opt={}){
+    if(!Array.isArray(needles))needles=[needles];
+    const ns=needles.map(normalizePdfLabel);
+    let candidates=rowBandItems(rowNum).filter(it=>{
+      if(opt.minX!=null&&it.x<opt.minX)return false;
+      return ns.some(n=>it.n===n||it.n.startsWith(n+' ')||it.n.includes(n));
+    });
+    candidates.sort((a,b)=>a.yTop-b.yTop||a.x-b.x);
+    return candidates[opt.occ||0]||null;
+  }
+  function checkRowToken(rowNum,needles,enabled,opt={}){
+    if(!enabled)return;
+    const it=rowBandToken(rowNum,needles,{minX:opt.minX==null?width*.45:opt.minX,occ:opt.occ||0});
+    if(!it)return;
+    const raw=String(it.str||'');
+    const hasBoxPrefix=/^[^A-Za-z0-9]/.test(raw.trim());
+    const x=it.x+(hasBoxPrefix?1:-8)+(opt.dx||0);
+    const y=posY(it,opt.dy==null?0:opt.dy);
+    mark(x,y); placedAny=true;
+  }
+  function writeAfterRowToken(rowNum,needles,value,opt={}){
+    if(!value)return;
+    const it=rowBandToken(rowNum,needles,{minX:opt.minX==null?width*.45:opt.minX,occ:opt.occ||0});
+    if(!it)return;
+    const x=it.x+it.w+(opt.dx==null?6:opt.dx);
+    draw(x,posY(it,opt.dy==null?-1:opt.dy),value,opt.maxWidth||Math.max(45,width-x-18),opt.size||6.1,font);
+    placedAny=true;
   }
 
   // 5 entry type
-  checkFixed(285.7,726.7,d.entryType==='Single Entry');
-  checkFixed(369.5,726.7,d.entryType==='Multiple Entry');
-  checkFixed(461.4,726.7,d.entryType==='Double Entry');
+  checkRowToken(5,'Single Entry',d.entryType==='Single Entry');
+  checkRowToken(5,'Multiple Entry',d.entryType==='Multiple Entry');
+  checkRowToken(5,'Double Entry',d.entryType==='Double Entry');
 
   // 6-9
   rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
@@ -397,56 +297,63 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  checkFixed(285.7,634.9,d.marital==='Single');
-  checkFixed(380.4,634.9,d.marital==='Married');
+  checkRowToken(10,['Single/Bekar','Single'],d.marital==='Single');
+  checkRowToken(10,['Married/EVLI','Married'],d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  checkFixed(285.7,594.8,d.expenses==='Applicant');
-  checkFixed(285.7,585.3,d.expenses==='Sponsor');
-  if(d.expenses==='Sponsor')drawFixed(365.0,584.0,d.sponsorName,185,6.2);
+  checkRowToken(12,['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant');
+  checkRowToken(12,['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')writeAfterRowToken(12,['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:8,maxWidth:180,size:6.1});
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
-  // 18, 21-24 fixed Yes/No groups
-  checkFixed(285.7,466.4,d.property==='No');
-  checkFixed(312.7,466.4,d.property==='Yes');
-  if(d.property==='Yes')drawFixed(355.0,465.1,d.propertyDetails,205,6.2);
+  // 18, 21-24 Yes/No groups, anchored inside each numbered row
+  checkRowToken(18,'No',d.property==='No');
+  checkRowToken(18,['Yes (Specify','Yes'],d.property==='Yes');
+  if(d.property==='Yes')writeAfterRowToken(18,['Yes (Specify','Yes'],d.propertyDetails,{dx:18,maxWidth:180,size:6.1});
 
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
 
-  checkFixed(285.7,394.3,d.travellingWith==='No');
-  checkFixed(312.7,394.3,d.travellingWith==='Yes');
-  if(d.travellingWith==='Yes')drawFixed(355.0,393.0,d.travellingDetails,205,6.2);
+  checkRowToken(21,'No',d.travellingWith==='No');
+  checkRowToken(21,['Yes (Specify','Yes'],d.travellingWith==='Yes');
+  if(d.travellingWith==='Yes')writeAfterRowToken(21,['Yes (Specify','Yes'],d.travellingDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkFixed(285.7,373.2,d.ksaRelatives==='No');
-  checkFixed(312.7,373.2,d.ksaRelatives==='Yes');
-  if(d.ksaRelatives==='Yes')drawFixed(355.0,371.9,d.ksaRelativesDetails,205,6.2);
+  checkRowToken(22,'No',d.ksaRelatives==='No');
+  checkRowToken(22,['Yes (Specify','Yes'],d.ksaRelatives==='Yes');
+  if(d.ksaRelatives==='Yes')writeAfterRowToken(22,['Yes (Specify','Yes'],d.ksaRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkFixed(285.7,351.3,d.turkishRelatives==='No');
-  checkFixed(312.7,351.3,d.turkishRelatives==='Yes');
-  if(d.turkishRelatives==='Yes')drawFixed(355.0,350.0,d.turkishRelativesDetails,205,6.2);
+  checkRowToken(23,'No',d.turkishRelatives==='No');
+  checkRowToken(23,['Yes (Specify','Yes'],d.turkishRelatives==='Yes');
+  if(d.turkishRelatives==='Yes')writeAfterRowToken(23,['Yes (Specify','Yes'],d.turkishRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkFixed(285.7,332.4,d.oldPassport==='No');
-  checkFixed(312.7,332.4,d.oldPassport==='Yes');
-  if(d.oldPassport==='Yes')drawFixed(395.0,331.1,d.oldPassportNumber,165,6.2);
+  checkRowToken(24,'No',d.oldPassport==='No');
+  checkRowToken(24,['Yes (Passport Number','Yes'],d.oldPassport==='Yes');
+  if(d.oldPassport==='Yes')writeAfterRowToken(24,['Passport Number:','Yes (Passport Number','Yes'],d.oldPassportNumber,{dx:10,maxWidth:145,size:6.1});
 
-  // Previous visa history table - fixed cells in the official form.
-  // The form has three visible rows; extra rows stay in the helper draft but are not
-  // stamped into the one-page official form.
+  // Previous visa history table, anchored to the printed table headers.
   if(d.history&&d.history.length){
-    const ys=[281.0,267.0,253.0];
-    d.history.slice(0,3).forEach((r,i)=>{
-      const y=ys[i];
-      drawFixed(36.0,y,r.country,180,5.7);
-      drawFixed(226.0,y,r.duration,70,5.7);
-      drawFixed(304.0,y,fmtPdfDate(r.from),76,5.4);
-      drawFixed(386.0,y,fmtPdfDate(r.to),76,5.4);
-      drawFixed(468.0,y,r.city,105,5.7);
-    });
+    const country=findAny(['Country/Ülke','Country']);
+    const duration=findAny(['Duration/Süre','Duration']);
+    const from=findAny(['From/..den','From']);
+    const to=findAny(['To/..kadar','To']);
+    const city=findAny(['City of Entry/Giriş','City of Entry']);
+    const header=country||duration||from||to||city;
+    if(header){
+      const baseY=posY(header,-18);
+      d.history.slice(0,3).forEach((r,i)=>{
+        const y=baseY-i*14.0;
+        if(country)draw(country.x,y,r.country,Math.max(65,(duration?duration.x:country.x+150)-country.x-6),5.6);
+        if(duration)draw(duration.x,y,r.duration,Math.max(45,(from?from.x:duration.x+90)-duration.x-6),5.6);
+        if(from)draw(from.x,y,fmtPdfDate(r.from),72,5.2);
+        if(to)draw(to.x,y,fmtPdfDate(r.to),72,5.2);
+        if(city)draw(city.x,y,r.city,Math.max(65,width-city.x-14),5.6);
+        placedAny=true;
+      });
+    }
   }
 
   // Applicant name above the signature/name label. Signature remains blank for manual signing.
@@ -459,23 +366,28 @@ async function generateFilledOfficialPdf(d){
 }
 form.addEventListener('submit',async e=>{
   e.preventDefault();
-  const d=getData();
+  let d=getData();
   if(!d.fullName){document.getElementById('errorMsg').classList.add('show');form.elements.fullName.focus();return}
   document.getElementById('errorMsg').classList.remove('show');saveDraft();
   const btn=document.getElementById('submitBtn');btn.disabled=true;
-  statusMsg(lang==='ar'?'جاري تجهيز معاينة النموذج الرسمي…':'Preparing the official form preview…');
+  statusMsg(lang==='ar'?'جاري تجهيز نسخة النموذج الرسمي ببياناتك…':'Creating the filled official form…');
+  const popup=window.open('','_blank');
+  if(popup){popup.document.write('<!doctype html><meta charset="utf-8"><title>Preparing PDF…</title><style>body{font-family:Arial,sans-serif;display:grid;place-items:center;height:100vh;margin:0;background:#f5f6f8;color:#222}div{text-align:center;line-height:1.8}</style><div>Preparing your filled official visa form…<br>Please wait.</div>');popup.document.close()}
   try{
-    await buildRasterPreview(d);
-    statusMsg(lang==='ar'?'تم تجهيز النموذج. راجع المعاينة ثم اضغط «فتح PDF للطباعة».':'The form is ready. Review the preview, then open the printable PDF.');
-    document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
+    const blob=await generateFilledOfficialPdf(d);
+    const url=URL.createObjectURL(blob);
+    statusMsg(lang==='ar'?'تم إنشاء النسخة الرسمية المعبأة. افتُتحت في صفحة جديدة للمراجعة والطباعة والتوقيع.':'The filled official form is ready and has opened in a new tab for review, printing and signature.');
+    if(popup)popup.location.href=url;else window.location.href=url;
+    setTimeout(()=>URL.revokeObjectURL(url),300000);
   }catch(err){
+    if(popup&&!popup.closed)popup.close();
     console.error(err);
-    statusMsg((lang==='ar'?'تعذر تجهيز النموذج: ':'Could not prepare the form: ')+(err&&err.message?err.message:''),true);
+    statusMsg((lang==='ar'?'تعذر إنشاء ملف PDF الرسمي تلقائيًا: ':'Could not generate the official PDF automatically: ')+(err&&err.message?err.message:''),true);
+    renderPreview(d);document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
   }finally{btn.disabled=false}
 });
-document.getElementById('exportPdfBtn').addEventListener('click',openRasterPdf);
 document.getElementById('editBtn').addEventListener('click',()=>{document.body.classList.remove('preview-mode');history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'})});
-restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){buildRasterPreview(d).then(()=>document.body.classList.add('preview-mode')).catch(console.error)}}
+restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){renderPreview(d);document.body.classList.add('preview-mode')}}
 </script>
 </body>
 </html>
