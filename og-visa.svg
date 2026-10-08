@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="315" viewBox="0 0 600 315">
+<rect width="600" height="315" fill="#f6f3ef"/>
+<rect x="0" y="0" width="210" height="315" fill="#b52430"/>
+<circle cx="80" cy="72" r="48" fill="#fff"/><circle cx="96" cy="72" r="38" fill="#b52430"/><text x="145" y="82" font-family="Arial" font-size="42" fill="#fff">★</text>
+<text x="558" y="78" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="31" font-weight="700" fill="#171b22">متطلبات التقديم</text>
+<rect x="268" y="91" width="290" height="55" rx="15" fill="#c62f38"/>
+<text x="540" y="128" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="28" font-weight="700" fill="#fff">على الفيزا التركية</text>
+<text x="558" y="178" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="15" fill="#555d68">قائمة تفاعلية لمراجعة المستندات قبل التقديم</text>
+<g transform="translate(268 206)"><rect width="90" height="62" rx="14" fill="#fff" stroke="#eadfe0"/><text x="45" y="27" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700" fill="#b52430">10</text><text x="45" y="46" text-anchor="middle" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="10" fill="#333">متطلبات</text></g>
+<g transform="translate(368 206)"><rect width="90" height="62" rx="14" fill="#fff" stroke="#eadfe0"/><text x="45" y="27" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#b52430">PDF</text><text x="45" y="46" text-anchor="middle" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="10" fill="#333">النموذج</text></g>
+<g transform="translate(468 206)"><rect width="90" height="62" rx="14" fill="#fff" stroke="#eadfe0"/><text x="45" y="27" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#b52430">✓</text><text x="45" y="46" text-anchor="middle" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="10" fill="#333">مراجعة</text></g>
+</svg>

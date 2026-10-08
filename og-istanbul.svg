@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="315" viewBox="0 0 600 315">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#8f1d27"/><stop offset=".5" stop-color="#b52430"/><stop offset="1" stop-color="#d13a46"/></linearGradient></defs>
+<rect width="600" height="315" fill="url(#g)"/>
+<circle cx="520" cy="40" r="125" fill="#fff" fill-opacity=".06"/><circle cx="72" cy="294" r="135" fill="none" stroke="#fff" stroke-opacity=".10"/>
+<text x="536" y="78" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="38" font-weight="700" fill="#fff">اكتشف إسطنبول</text>
+<text x="536" y="116" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="17" fill="#fff" fill-opacity=".88">أماكن مختارة + مفضلة + خطة أيام</text>
+<g transform="translate(54 160)">
+<rect width="492" height="99" rx="20" fill="#fff"/>
+<text x="450" y="34" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="16" font-weight="700" fill="#20242b">كافيهات • مطاعم • حدائق • معالم • متاحف</text>
+<text x="450" y="62" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="13" fill="#6f7680">بحث وتقييمات وخرائط وحفظ بدون تسجيل</text>
+<text x="450" y="84" text-anchor="end" direction="rtl" unicode-bidi="bidi-override" font-family="DejaVu Sans,Arial,sans-serif" font-size="11" fill="#a31f29">37 مكان وتطبيق</text>
+</g>
+</svg>

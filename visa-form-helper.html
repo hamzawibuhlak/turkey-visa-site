@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مساعد تعبئة نموذج التأشيرة التركية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#c62f38;--red2:#a91f29;--redSoft:#fff0f1;--ink:#181a1f;--muted:#737b88;--line:#e4e7eb;--bg:#f5f6f8;--card:#fff;--gold:#bc9657;--green:#207a62;--shadow:0 12px 35px rgba(25,31,40,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Almarai",system-ui,-apple-system,sans-serif}button,input,select,textarea{font:inherit}.shell{width:min(820px,calc(100% - 22px));margin:auto;padding:16px 0 44px}.topbar{position:sticky;top:10px;z-index:30;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(225,228,233,.95);border-radius:22px;box-shadow:0 8px 25px rgba(20,27,35,.08);padding:10px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,var(--red),#e24e56);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}.brand-copy{min-width:0}.brand-copy strong{display:block;font-size:13px;line-height:1.4}.brand-copy span{display:block;font-size:9.5px;color:var(--muted);margin-top:2px}.lang{display:flex;gap:4px;padding:3px;background:#f0f1f3;border-radius:11px}.lang button{border:0;background:transparent;padding:7px 9px;border-radius:8px;font-size:10px;font-weight:800;color:#737984;cursor:pointer}.lang button.active{background:#fff;color:var(--ink);box-shadow:0 2px 7px rgba(20,27,35,.08)}
+.hero{margin-top:14px;padding:22px 19px;border-radius:26px;color:#fff;background:radial-gradient(circle at 10% 110%,rgba(255,255,255,.11),transparent 34%),linear-gradient(135deg,#b7212c,#cf3943);box-shadow:var(--shadow)}.hero-kicker{font-size:10px;font-weight:800;opacity:.82}.hero h1{margin:8px 0 6px;font-size:clamp(24px,5vw,37px);line-height:1.35;letter-spacing:-.4px}.hero p{margin:0;max-width:670px;font-size:12px;line-height:1.9;color:rgba(255,255,255,.86)}.language-note{margin:10px 0 0;padding:11px 13px;border-radius:14px;background:#fff8e8;border:1px solid #f0dfb7;color:#6f5524;font-size:12px;line-height:1.8}.language-note strong{font-weight:800}
+.privacy{margin-top:12px;padding:11px 13px;border-radius:14px;background:#fff7e8;border:1px solid #f1dfb9;color:#735924;font-size:10.5px;line-height:1.7}.privacy strong{font-weight:800}
+.form-wrap{margin-top:14px}.section{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 7px 24px rgba(24,31,40,.045);padding:16px;margin-bottom:12px}.section-title{display:flex;align-items:center;gap:8px;margin-bottom:13px}.section-title .dot{width:9px;height:9px;border-radius:3px;background:var(--red)}.section-title h2{font-size:15px;margin:0;font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}.field label{display:block;font-size:10.5px;font-weight:800;line-height:1.6;margin:0 0 6px}.field label .num{display:inline-grid;place-items:center;width:20px;height:20px;background:var(--redSoft);color:var(--red);border-radius:7px;margin-inline-end:5px;font-size:9px}.field input,.field select,.field textarea{width:100%;border:1px solid #dadddf;background:#fff;border-radius:12px;padding:11px 12px;outline:none;color:var(--ink);font-size:12px;transition:border .15s,box-shadow .15s}.field textarea{min-height:84px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(198,47,56,.65);box-shadow:0 0 0 3px rgba(198,47,56,.08)}.hint{font-size:9px;color:var(--muted);line-height:1.6;margin-top:5px}.choice-row{display:flex;gap:7px;flex-wrap:wrap}.choice{position:relative}.choice input{position:absolute;opacity:0;pointer-events:none}.choice span{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #dde0e4;border-radius:10px;background:#fff;font-size:10px;font-weight:800;cursor:pointer}.choice input:checked+span{border-color:#dfa1a6;background:var(--redSoft);color:var(--red)}.staff-box{border:1px dashed #d7dade;background:#fafbfc;border-radius:13px;padding:12px;color:#6d7480;font-size:10.5px;line-height:1.7}.staff-box strong{color:#3b3f45}.conditional-input{display:none;margin-top:8px}.conditional-input.show{display:block}.visa-table{width:100%;border-collapse:separate;border-spacing:0 8px}.visa-table th{text-align:start;font-size:9px;color:var(--muted);font-weight:800;padding:0 5px}.visa-table td{padding:0 4px}.visa-table input{width:100%;border:1px solid #dadddf;border-radius:10px;padding:9px;font-size:10px}.add-row{border:0;background:#f1f3f5;color:#39404a;border-radius:10px;padding:9px 11px;font-size:10px;font-weight:800;cursor:pointer}.actions{display:flex;gap:8px;position:sticky;bottom:10px;z-index:20;background:rgba(245,246,248,.88);backdrop-filter:blur(10px);padding:8px 0}.primary,.secondary{border:0;border-radius:14px;padding:13px 16px;font-weight:800;font-size:12px;cursor:pointer}.primary{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;flex:1;box-shadow:0 7px 18px rgba(185,39,49,.22)}.secondary{background:#fff;color:#4a5059;border:1px solid #dfe2e6}.error{display:none;margin:8px 0 0;color:#b0252f;font-size:10px}.error.show{display:block}
+/* preview */
+#preview{display:none}.preview-mode #editor{display:none}.preview-mode #preview{display:block}.preview-card{margin-top:14px;background:#fff;border:1px solid #dfe2e6;border-radius:18px;box-shadow:var(--shadow);padding:20px}.preview-head{text-align:center;border-bottom:2px solid #20242a;padding-bottom:10px;margin-bottom:10px}.preview-head h1{font-family:Arial,sans-serif;font-size:21px;letter-spacing:.4px;margin:0}.preview-badge{display:inline-block;margin-top:5px;padding:4px 8px;border-radius:999px;background:#fff3d8;color:#75551e;font-size:9px;font-weight:800}.form-lines{direction:ltr;font-family:Arial,sans-serif}.line{display:grid;grid-template-columns:280px 1fr;gap:10px;align-items:start;padding:5px 0;border-bottom:1px solid #eceef0;font-size:10.5px;line-height:1.35}.line .label{font-weight:700}.line .value{min-height:16px;font-weight:600;word-break:break-word}.subvalue{font-weight:400;color:#555}.visa-history{direction:ltr;width:100%;border-collapse:collapse;margin-top:8px;font-family:Arial,sans-serif;font-size:9px}.visa-history th,.visa-history td{border:1px solid #888;padding:5px;text-align:left}.declaration{direction:ltr;font-family:Arial,sans-serif;margin-top:10px;border-top:1px solid #333;padding-top:8px;font-size:9px;line-height:1.45}.signature{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;direction:ltr;font-family:Arial,sans-serif;font-size:9px}.sigline{padding-top:24px;border-bottom:1px solid #333}.preview-actions{display:flex;gap:8px;margin-top:12px}.preview-actions button,.preview-actions a{border:0;border-radius:12px;padding:11px 13px;font-size:10.5px;font-weight:800;text-decoration:none;cursor:pointer}.print-btn{background:var(--red);color:#fff}.edit-btn{background:#eceff2;color:#31363d}.pdf-btn{background:#fff;border:1px solid #dde1e5!important;color:#31363d}.small-note{margin-top:10px;color:var(--muted);font-size:9.5px;line-height:1.6}
+
+.pdf-status{display:none;margin:10px 0 0;padding:10px 12px;border-radius:13px;background:#eef5ff;border:1px solid #d8e7fb;color:#315b88;font-size:10.5px;line-height:1.7}.pdf-status.show{display:block}.pdf-status.error{background:#fff0f1;border-color:#f1cdd0;color:#9d2730}.primary[disabled]{opacity:.62;cursor:wait}
+@media(max-width:620px){.shell{width:min(100% - 16px,820px)}.topbar{top:6px;border-radius:18px}.grid{grid-template-columns:1fr}.section{padding:14px;border-radius:18px}.hero{border-radius:22px;padding:19px 16px}.hero h1{font-size:25px}.line{grid-template-columns:1fr;gap:2px;padding:7px 0}.line .value{padding-inline-start:8px}.visa-table{display:block;overflow-x:auto;white-space:nowrap}.actions{bottom:6px}.preview-card{padding:14px}.preview-actions{flex-wrap:wrap}}
+@media print{body{background:#fff}.shell{width:100%;padding:0}.topbar,.hero,.privacy,#editor,.preview-actions,.small-note{display:none!important}#preview{display:block!important}.preview-card{margin:0;border:0;border-radius:0;box-shadow:none;padding:0}.preview-badge{display:none}.line{font-size:9.5px;padding:3.5px 0}.preview-head h1{font-size:18px}.visa-history{font-size:8px}.declaration{font-size:8px}}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">TR</div><div class="brand-copy"><strong data-i18n="brand">مساعد تعبئة النموذج</strong><span data-i18n="brandSub">تأشيرة تركيا • السعودية</span></div></div>
+    <div class="lang" aria-label="Language"><button id="arBtn" class="active" type="button">عربي</button><button id="enBtn" type="button">EN</button></div>
+  </div>
+
+  <div id="editor">
+    <section class="hero"><div class="hero-kicker" data-i18n="kicker">مساعد غير رسمي لتجهيز بياناتك</div><h1 data-i18n="title">دعنا نساعدك في تعبئة النموذج</h1><p data-i18n="intro">أدخل بياناتك مرة واحدة، ثم ننشئ لك نسخة من النموذج الرسمي نفسه وقد وُضعت بياناتك في أماكنها لتراجعها وتطبعها وتوقّعها.</p></section>
+    <div class="privacy"><strong data-i18n="privacyTitle">خصوصيتك:</strong> <span data-i18n="privacy">البيانات تُحفظ على جهازك داخل المتصفح فقط ولا يتم إرسالها إلى خادم.</span></div>
+    <div class="language-note"><strong data-i18n="langNoteTitle">ملاحظة:</strong> <span data-i18n="langNote">يفضّل تعبئة البيانات باللغة الإنجليزية كما هي مكتوبة في جواز السفر والمستندات الرسمية.</span></div>
+    <form id="visaForm" class="form-wrap" novalidate>
+      <section class="section"><div class="section-title"><span class="dot"></span><h2 data-i18n="secPersonal">البيانات الشخصية والتواصل</h2></div><div class="grid">
+        <div class="field full"><label><span class="num">1</span><span data-i18n="f1">الاسم واللقب</span></label><input name="fullName" required autocomplete="name"></div>
+        <div class="field"><label><span class="num">2</span><span data-i18n="father">اسم الأب</span></label><input name="fatherName"></div>
+        <div class="field"><label><span data-i18n="mother">اسم الأم</span></label><input name="motherName"></div>
+        <div class="field full"><label><span class="num">3</span><span data-i18n="f3">العنوان في المملكة العربية السعودية</span></label><textarea name="ksaAddress"></textarea></div>
+        <div class="field"><label><span class="num">4</span><span data-i18n="mobile">رقم الجوال</span></label><input name="mobile" inputmode="tel" autocomplete="tel"></div>
+        <div class="field"><label><span data-i18n="email">البريد الإلكتروني</span></label><input name="email" type="email" autocomplete="email"></div>
+        <div class="field full"><label><span class="num">5</span><span data-i18n="f5">عدد مرات الدخول</span></label><div class="choice-row">
+          <label class="choice"><input type="radio" name="entryType" value="Single Entry"><span data-i18n="single">دخول مفرد</span></label>
+          <label class="choice"><input type="radio" name="entryType" value="Multiple Entry"><span data-i18n="multiple">دخول متعدد</span></label>
+          <label class="choice"><input type="radio" name="entryType" value="Double Entry"><span data-i18n="double">دخول مزدوج</span></label>
+        </div></div>
+        <div class="field full"><label><span class="num">6</span><span data-i18n="f6">غرض الزيارة</span></label><input name="purpose"></div>
+        <div class="field"><label><span class="num">7</span><span data-i18n="f7">الجنسية</span></label><input name="nationality"></div>
+        <div class="field"><label><span class="num">9</span><span data-i18n="f9">مكان الميلاد</span></label><input name="birthPlace"></div>
+        <div class="field"><label><span class="num">8</span><span data-i18n="idnum">رقم الهوية / الإقامة</span></label><input name="residentId"></div>
+        <div class="field"><label><span data-i18n="idexp">تاريخ انتهاء الهوية / الإقامة</span></label><input name="residentExpiry" type="date"></div>
+        <div class="field full"><label><span class="num">10</span><span data-i18n="f10">الحالة الاجتماعية</span></label><div class="choice-row">
+          <label class="choice"><input type="radio" name="marital" value="Single"><span data-i18n="marSingle">أعزب / عزباء</span></label>
+          <label class="choice"><input type="radio" name="marital" value="Married"><span data-i18n="marMarried">متزوج / متزوجة</span></label>
+        </div></div>
+        <div class="field full"><label><span class="num">11</span><span data-i18n="f11">منذ متى وأنت مقيم في السعودية؟</span></label><input name="ksaDuration" placeholder="مثال: 5 سنوات"></div>
+      </div></section>
+
+      <section class="section"><div class="section-title"><span class="dot"></span><h2 data-i18n="secWork">المصاريف والعمل</h2></div><div class="grid">
+        <div class="field full"><label><span class="num">12</span><span data-i18n="f12">من يتحمل المصاريف؟</span></label><div class="choice-row">
+          <label class="choice"><input type="radio" name="expenses" value="Applicant"><span data-i18n="applicant">مقدم الطلب</span></label>
+          <label class="choice"><input type="radio" name="expenses" value="Sponsor"><span data-i18n="sponsor">كفيل / ممول</span></label>
+        </div><div class="conditional-input" id="sponsorWrap"><input name="sponsorName" data-ph-ar="اسم الكفيل / الممول" data-ph-en="Sponsor name"></div></div>
+        <div class="field full"><label><span class="num">13</span><span data-i18n="f13">المهنة بالتفصيل</span></label><input name="occupation"></div>
+        <div class="field"><label><span class="num">14</span><span data-i18n="f14">الدخل الشهري</span></label><div class="staff-box"><strong data-i18n="staff">يُترك لموظف VFS</strong><br><span data-i18n="staffNote">سيقوم موظف مركز التأشيرات بتعبئة هذه المعلومة.</span></div></div>
+        <div class="field"><label><span class="num">15</span><span data-i18n="f15">الرصيد البنكي</span></label><div class="staff-box"><strong data-i18n="staff">يُترك لموظف VFS</strong><br><span data-i18n="staffNote">سيقوم موظف مركز التأشيرات بتعبئة هذه المعلومة.</span></div></div>
+        <div class="field"><label><span class="num">16</span><span data-i18n="f16">اسم الشركة</span></label><input name="company"></div>
+        <div class="field"><label><span class="num">17</span><span data-i18n="f17">منذ متى تعمل؟</span></label><input name="workDuration"></div>
+      </div></section>
+
+      <section class="section"><div class="section-title"><span class="dot"></span><h2 data-i18n="secTravel">السفر والإقامة في تركيا</h2></div><div class="grid">
+        <div class="field full"><label><span class="num">18</span><span data-i18n="f18">هل لديك عقار في تركيا؟</span></label><div class="choice-row"><label class="choice"><input type="radio" name="property" value="No"><span data-i18n="no">لا</span></label><label class="choice"><input type="radio" name="property" value="Yes"><span data-i18n="yes">نعم</span></label></div><div class="conditional-input" id="propertyWrap"><input name="propertyDetails" data-ph-ar="اذكر التفاصيل" data-ph-en="Specify"></div></div>
+        <div class="field"><label><span class="num">19</span><span data-i18n="departure">تاريخ المغادرة</span></label><input name="departure" type="date"></div>
+        <div class="field"><label><span data-i18n="arrival">تاريخ الوصول</span></label><input name="arrival" type="date"></div>
+        <div class="field full"><label><span class="num">20</span><span data-i18n="f20">مدينة / مكان الإقامة في تركيا</span></label><input name="stayPlace"></div>
+        <div class="field full"><label><span class="num">21</span><span data-i18n="f21">هل تسافر مع شخص آخر؟</span></label><div class="choice-row"><label class="choice"><input type="radio" name="travellingWith" value="No"><span data-i18n="no">لا</span></label><label class="choice"><input type="radio" name="travellingWith" value="Yes"><span data-i18n="yes">نعم</span></label></div><div class="conditional-input" id="travellingWrap"><input name="travellingDetails" data-ph-ar="اذكر الأسماء / الصلة" data-ph-en="Specify"></div></div>
+        <div class="field full"><label><span class="num">22</span><span data-i18n="f22">هل لديك أقارب سعوديون؟</span></label><div class="choice-row"><label class="choice"><input type="radio" name="ksaRelatives" value="No"><span data-i18n="no">لا</span></label><label class="choice"><input type="radio" name="ksaRelatives" value="Yes"><span data-i18n="yes">نعم</span></label></div><div class="conditional-input" id="ksaRelativesWrap"><input name="ksaRelativesDetails" data-ph-ar="اذكر صلة القرابة" data-ph-en="Specify relationship"></div></div>
+        <div class="field full"><label><span class="num">23</span><span data-i18n="f23">هل لديك أقارب أتراك؟</span></label><div class="choice-row"><label class="choice"><input type="radio" name="turkishRelatives" value="No"><span data-i18n="no">لا</span></label><label class="choice"><input type="radio" name="turkishRelatives" value="Yes"><span data-i18n="yes">نعم</span></label></div><div class="conditional-input" id="turkishRelativesWrap"><input name="turkishRelativesDetails" data-ph-ar="اذكر صلة القرابة" data-ph-en="Specify relationship"></div></div>
+        <div class="field full"><label><span class="num">24</span><span data-i18n="f24">هل لديك جواز سفر قديم؟</span></label><div class="choice-row"><label class="choice"><input type="radio" name="oldPassport" value="No"><span data-i18n="no">لا</span></label><label class="choice"><input type="radio" name="oldPassport" value="Yes"><span data-i18n="yes">نعم</span></label></div><div class="conditional-input" id="oldPassportWrap"><input name="oldPassportNumber" data-ph-ar="رقم الجواز القديم" data-ph-en="Passport Number"></div></div>
+      </div></section>
+
+      <section class="section"><div class="section-title"><span class="dot"></span><h2 data-i18n="secHistory">التأشيرات السابقة</h2></div><p class="hint" data-i18n="historyHint">تركيا / شنغن / الولايات المتحدة / المملكة المتحدة / كندا / أيرلندا — أضف فقط ما ينطبق عليك.</p><div style="overflow-x:auto"><table class="visa-table"><thead><tr><th data-i18n="country">الدولة</th><th data-i18n="duration">المدة</th><th data-i18n="from">من</th><th data-i18n="to">إلى</th><th data-i18n="cityEntry">مدينة الدخول</th></tr></thead><tbody id="historyBody"></tbody></table></div><button class="add-row" id="addRow" type="button" data-i18n="addVisa">+ إضافة تأشيرة سابقة</button></section>
+
+      <div class="error" id="errorMsg" data-i18n="error">يرجى إدخال الاسم على الأقل قبل إنشاء النموذج.</div>
+      <div class="actions"><button class="primary" id="submitBtn" type="submit" data-i18n="submit">إنشاء النموذج الرسمي المعبأ</button><button class="secondary" id="clearBtn" type="button" data-i18n="clear">مسح البيانات</button></div><div class="pdf-status" id="pdfStatus"></div>
+    </form>
+  </div>
+
+  <div id="preview">
+    <div class="preview-card">
+      <div class="preview-head"><h1>VISA APPLICATION FORM</h1><span class="preview-badge" data-i18n="draftBadge">معاينة احتياطية للبيانات</span></div>
+      <div class="form-lines" id="previewLines"></div>
+      <table class="visa-history"><thead><tr><th>Country</th><th>Duration</th><th>Date From</th><th>Date To</th><th>City of Entry</th></tr></thead><tbody id="previewHistory"></tbody></table>
+      <div class="declaration"><strong>I/We, the undersigned, hereby declare that:</strong><br><span>This draft is provided to help transfer your information to the official application form. Please review all details against the official form before submission.</span></div>
+      <div class="signature"><div><div class="sigline" id="sigName"></div><div>APPLICANT NAME SURNAME</div></div><div><div class="sigline"></div><div>SIGNATURE</div></div></div>
+    </div>
+    <div class="preview-actions"><button class="print-btn" onclick="window.print()" data-i18n="print">طباعة / حفظ PDF</button><button class="edit-btn" id="editBtn" data-i18n="edit">تعديل البيانات</button><a class="pdf-btn" target="_blank" rel="noopener noreferrer" href="https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf" data-i18n="officialPdf">فتح النموذج الرسمي PDF</a></div>
+    <div class="small-note" data-i18n="previewNote">هذه الصفحة مساعدة لتجهيز البيانات وليست بديلاً عن النموذج الرسمي. راجع البيانات ثم انقلها/اطبعها حسب متطلبات مركز التقديم.</div>
+  </div>
+</div>
+<script>
+const STORAGE='turkeyVisaFormHelperV1';
+let lang=localStorage.getItem('turkeyVisaFormLang')||'ar';
+const i18n={
+ ar:{brand:'مساعد تعبئة النموذج',brandSub:'تأشيرة تركيا • السعودية',kicker:'مساعد غير رسمي لتجهيز بياناتك',title:'دعنا نساعدك في تعبئة النموذج',intro:'أدخل بياناتك مرة واحدة، ثم ننشئ لك نسخة من النموذج الرسمي نفسه وقد وُضعت بياناتك في أماكنها لتراجعها وتطبعها وتوقّعها.',privacyTitle:'خصوصيتك:',privacy:'البيانات تُحفظ على جهازك داخل المتصفح فقط ولا يتم إرسالها إلى خادم.',langNoteTitle:'ملاحظة:',langNote:'يفضّل تعبئة البيانات باللغة الإنجليزية كما هي مكتوبة في جواز السفر والمستندات الرسمية.',secPersonal:'البيانات الشخصية والتواصل',f1:'الاسم واللقب',father:'اسم الأب',mother:'اسم الأم',f3:'العنوان في المملكة العربية السعودية',mobile:'رقم الجوال',email:'البريد الإلكتروني',f5:'عدد مرات الدخول',single:'دخول مفرد',multiple:'دخول متعدد',double:'دخول مزدوج',f6:'غرض الزيارة',f7:'الجنسية',f9:'مكان الميلاد',idnum:'رقم الهوية / الإقامة',idexp:'تاريخ انتهاء الهوية / الإقامة',f10:'الحالة الاجتماعية',marSingle:'أعزب / عزباء',marMarried:'متزوج / متزوجة',f11:'منذ متى وأنت مقيم في السعودية؟',secWork:'المصاريف والعمل',f12:'من يتحمل المصاريف؟',applicant:'مقدم الطلب',sponsor:'كفيل / ممول',f13:'المهنة بالتفصيل',f14:'الدخل الشهري',f15:'الرصيد البنكي',staff:'يُترك لموظف VFS',staffNote:'سيقوم موظف مركز التأشيرات بتعبئة هذه المعلومة.',f16:'اسم الشركة',f17:'منذ متى تعمل؟',secTravel:'السفر والإقامة في تركيا',f18:'هل لديك عقار في تركيا؟',no:'لا',yes:'نعم',departure:'تاريخ المغادرة',arrival:'تاريخ الوصول',f20:'مدينة / مكان الإقامة في تركيا',f21:'هل تسافر مع شخص آخر؟',f22:'هل لديك أقارب سعوديون؟',f23:'هل لديك أقارب أتراك؟',f24:'هل لديك جواز سفر قديم؟',secHistory:'التأشيرات السابقة',historyHint:'تركيا / شنغن / الولايات المتحدة / المملكة المتحدة / كندا / أيرلندا — أضف فقط ما ينطبق عليك.',country:'الدولة',duration:'المدة',from:'من',to:'إلى',cityEntry:'مدينة الدخول',addVisa:'+ إضافة تأشيرة سابقة',error:'يرجى إدخال الاسم على الأقل قبل إنشاء النموذج.',submit:'إنشاء النموذج الرسمي المعبأ',clear:'مسح البيانات',draftBadge:'معاينة احتياطية للبيانات',print:'طباعة / حفظ PDF',edit:'تعديل البيانات',officialPdf:'فتح النموذج الرسمي PDF',previewNote:'إذا تعذر إنشاء ملف PDF الرسمي تلقائيًا، ستظهر هذه المعاينة كخيار احتياطي لمراجعة بياناتك.'},
+ en:{brand:'Form Filling Assistant',brandSub:'Türkiye Visa • Saudi Arabia',kicker:'Unofficial assistant to prepare your details',title:'Let us help you fill the form',intro:'Enter your information once and we will create a copy of the official form with your details placed into the corresponding fields for review, printing and signature.',privacyTitle:'Privacy:',privacy:'Your data stays on this device in your browser and is not sent to a server.',langNoteTitle:'Note:',langNote:'It is preferable to enter your information in English exactly as shown in your passport and official documents.',secPersonal:'Personal & Contact Information',f1:'Name Surname',father:'Father',mother:'Mother',f3:'Address in KSA',mobile:'Mobile Number',email:'Email Address',f5:'Number of Entry',single:'Single Entry',multiple:'Multiple Entry',double:'Double Entry',f6:'Purpose of Visit',f7:'Nationality',f9:'Place of Birth',idnum:'National ID/Resident ID — ID Number',idexp:'Expiration Date',f10:'Marital Status',marSingle:'Single',marMarried:'Married',f11:'How long been in KSA',secWork:'Expenses & Employment',f12:'Who covers the expenses',applicant:'Applicant',sponsor:'Sponsor',f13:'Occupation (Detailed)',f14:'Monthly Income',f15:'Bank Balance',staff:'VFS Staff will fill out this information',staffNote:'Leave this field for VFS staff.',f16:'Company Name',f17:'How long been working',secTravel:'Travel & Stay in Türkiye',f18:'Any property in TR?',no:'No',yes:'Yes',departure:'Date of Departure',arrival:'Date of Arrival',f20:'Place of Stay in TR',f21:'Who are you travelling with?',f22:'Any Ksa Relatives, if any relation',f23:'Any Turkish Relatives, if any relation',f24:'Old Passport Details, if available',secHistory:'TURKEY/Schengen/USA/UK/Canada/Ireland Visas Before',historyHint:'Add previous visas only when applicable.',country:'Country',duration:'Duration',from:'Date From',to:'Date To',cityEntry:'City of Entry',addVisa:'+ Add previous visa',error:'Please enter at least the applicant name before creating the form.',submit:'Create filled official form',clear:'Clear data',draftBadge:'Fallback data preview',print:'Print / Save PDF',edit:'Edit information',officialPdf:'Open official PDF form',previewNote:'If automatic official-PDF generation fails, this preview is shown as a fallback so you can review your information.'}
+};
+const form=document.getElementById('visaForm');
+const historyBody=document.getElementById('historyBody');
+function setLang(l){lang=l;localStorage.setItem('turkeyVisaFormLang',l);document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';document.querySelectorAll('[data-i18n]').forEach(el=>{let k=el.dataset.i18n;if(i18n[l][k])el.textContent=i18n[l][k]});document.querySelectorAll('[data-ph-ar]').forEach(el=>el.placeholder=l==='ar'?el.dataset.phAr:el.dataset.phEn);document.getElementById('arBtn').classList.toggle('active',l==='ar');document.getElementById('enBtn').classList.toggle('active',l==='en')}
+function addHistoryRow(v={}){let tr=document.createElement('tr');['country','duration','from','to','city'].forEach((k,idx)=>{let td=document.createElement('td');let inp=document.createElement('input');inp.dataset.hkey=k;inp.value=v[k]||'';if(k==='from'||k==='to')inp.type='date';inp.addEventListener('input',saveDraft);td.appendChild(inp);tr.appendChild(td)});historyBody.appendChild(tr)}
+function getData(){let fd=new FormData(form),d={};for(let [k,v] of fd.entries())d[k]=v;d.history=[...historyBody.querySelectorAll('tr')].map(tr=>{let o={};tr.querySelectorAll('input').forEach(i=>o[i.dataset.hkey]=i.value);return o}).filter(o=>Object.values(o).some(Boolean));return d}
+function saveDraft(){localStorage.setItem(STORAGE,JSON.stringify(getData()))}
+function restore(){let d={};try{d=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch(e){};Object.entries(d).forEach(([k,v])=>{if(k==='history'||Array.isArray(v))return;let els=form.elements[k];if(!els)return;if(els instanceof RadioNodeList){[...els].forEach(x=>x.checked=x.value===v)}else els.value=v||''});historyBody.innerHTML='';(d.history&&d.history.length?d.history:[{}]).forEach(addHistoryRow);updateConditionals()}
+function toggleByRadio(name,id){let v=form.elements[name]?.value;document.getElementById(id).classList.toggle('show',v==='Yes'||v==='Sponsor')}
+function updateConditionals(){toggleByRadio('expenses','sponsorWrap');toggleByRadio('property','propertyWrap');toggleByRadio('travellingWith','travellingWrap');toggleByRadio('ksaRelatives','ksaRelativesWrap');toggleByRadio('turkishRelatives','turkishRelativesWrap');toggleByRadio('oldPassport','oldPassportWrap')}
+form.addEventListener('input',()=>{updateConditionals();saveDraft()});form.addEventListener('change',()=>{updateConditionals();saveDraft()});
+document.getElementById('addRow').addEventListener('click',()=>{addHistoryRow();saveDraft()});
+document.getElementById('arBtn').addEventListener('click',()=>setLang('ar'));document.getElementById('enBtn').addEventListener('click',()=>setLang('en'));
+document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm(lang==='ar'?'مسح جميع البيانات المحفوظة؟':'Clear all saved data?')){localStorage.removeItem(STORAGE);form.reset();historyBody.innerHTML='';addHistoryRow();updateConditionals()}});
+function fmtDate(x){if(!x)return'';let p=x.split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:x}
+function yn(v,details){if(!v)return'';return v+(v==='Yes'&&details?` — ${details}`:'')}
+function previewLine(n,label,value){return `<div class="line"><div class="label">${n}. ${label}</div><div class="value">${value||''}</div></div>`}
+function esc(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function renderPreview(d){let expenses=d.expenses==='Sponsor'?`Sponsor (Name: ${esc(d.sponsorName)})`:d.expenses||'';let h='';h+=previewLine(1,'Name Surname / İsim Soyisim',esc(d.fullName));h+=previewLine(2,'Parent Names / Baba ve Anne Adı',`Father: ${esc(d.fatherName)} &nbsp;&nbsp; Mother: ${esc(d.motherName)}`);h+=previewLine(3,'Address in KSA',esc(d.ksaAddress));h+=previewLine(4,'Mobile Number & Email Address',`${esc(d.mobile)}${d.mobile&&d.email?' • ':''}${esc(d.email)}`);h+=previewLine(5,'Number of Entry/Giriş Sayısı',esc(d.entryType));h+=previewLine(6,'Purpose of Visit/Gidiş Amacı',esc(d.purpose));h+=previewLine(7,'Nationality/Uyruğu',esc(d.nationality));h+=previewLine(8,'National ID/Resident ID',`ID Number: ${esc(d.residentId)} &nbsp;&nbsp; Expiration Date: ${fmtDate(d.residentExpiry)}`);h+=previewLine(9,'Place of Birth/Doğum Yeri',esc(d.birthPlace));h+=previewLine(10,'Marital Status/Medeni Durumu',esc(d.marital));h+=previewLine(11,'How long been in KSA/Ne kadar zamandır saudi\'de yaşıyor',esc(d.ksaDuration));h+=previewLine(12,'Who covers the expenses / Masrafları kim karşılıyor',expenses);h+=previewLine(13,'Occupation/Mesleği (Detailed/Detaylı)',esc(d.occupation));h+=previewLine(14,'Monthly Income/Aylık Gelir','(VFS Staff will fill out this information)');h+=previewLine(15,'Bank Balance/Bankadaki bakiye','(VFS Staff will fill out this information)');h+=previewLine(16,'Company Name/Şirket Adı',esc(d.company));h+=previewLine(17,'How long been working/Ne zamandır çalışıyor',esc(d.workDuration));h+=previewLine(18,"Any property in TR/TR'de gayrimenkul var mı?",esc(yn(d.property,d.propertyDetails)));h+=previewLine(19,'Travel Dates/Seyahat Tarihleri',`Date of Departure: ${fmtDate(d.departure)} &nbsp;&nbsp; Date of Arrival: ${fmtDate(d.arrival)}`);h+=previewLine(20,"Place of Stay in TR/TR'de kalacağı şehir",esc(d.stayPlace));h+=previewLine(21,'Who are you travelling with?/Kiminle seyahat ediyor',esc(yn(d.travellingWith,d.travellingDetails)));h+=previewLine(22,'Any Ksa Relatives, if any relation/Suudi Akrabası Varsa Yakınlığı',esc(yn(d.ksaRelatives,d.ksaRelativesDetails)));h+=previewLine(23,'Any Turkish Relatives, if any relation/Türk akrabası Varsa Yakınlığı',esc(yn(d.turkishRelatives,d.turkishRelativesDetails)));h+=previewLine(24,'Old Passport Details, if available/Varsa eski pasaport bilgileri',esc(yn(d.oldPassport,d.oldPassportNumber?`Passport Number: ${d.oldPassportNumber}`:'')));document.getElementById('previewLines').innerHTML=h;let ph=document.getElementById('previewHistory');ph.innerHTML=(d.history&&d.history.length?d.history:[{}]).map(r=>`<tr><td>${esc(r.country)}</td><td>${esc(r.duration)}</td><td>${fmtDate(r.from)}</td><td>${fmtDate(r.to)}</td><td>${esc(r.city)}</td></tr>`).join('');document.getElementById('sigName').textContent=d.fullName||''}
+const OFFICIAL_PDF_URL='https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf';
+const PDFJS_WORKER='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER;
+function statusMsg(msg,isError=false){let el=document.getElementById('pdfStatus');el.textContent=msg;el.classList.add('show');el.classList.toggle('error',!!isError)}
+function hasArabicText(d){let vals=[];Object.entries(d).forEach(([k,v])=>{if(k==='history'&&Array.isArray(v)){v.forEach(r=>Object.values(r).forEach(x=>vals.push(x)))}else vals.push(v)});return vals.some(v=>/[\u0600-\u06FF]/.test(String(v||'')))}
+function cleanPdfText(v){return String(v||'').replace(/[\u0000-\u001F]/g,' ').replace(/\s+/g,' ').trim()}
+function normalizePdfLabel(v){return String(v||'').replace(/[\uE000-\uF8FF]/g,'').replace(/\s+/g,' ').trim().toLowerCase()}
+function fmtPdfDate(x){return fmtDate(x)}
+function makeTextTools(page,font,bold,width,height){
+  function fit(txt,maxWidth,size=7,min=4.7,f=font){txt=cleanPdfText(txt);if(!txt)return {txt:'',size};let s=size;while(s>min&&f.widthOfTextAtSize(txt,s)>maxWidth)s-=.25;if(f.widthOfTextAtSize(txt,s)<=maxWidth)return {txt,size:s};let out=txt;while(out.length>2&&f.widthOfTextAtSize(out+'…',s)>maxWidth)out=out.slice(0,-1);return {txt:out+'…',size:s}}
+  function draw(x,y,txt,maxWidth=width-x-18,size=7,f=font){if(!txt)return;let q=fit(txt,Math.max(18,maxWidth),size,4.7,f);page.drawText(q.txt,{x,y,size:q.size,font:f,color:PDFLib.rgb(.08,.08,.1)})}
+  function mark(x,y){page.drawText('X',{x,y,size:8,font:bold,color:PDFLib.rgb(.72,.08,.12)})}
+  return {draw,mark};
+}
+async function generateFilledOfficialPdf(d){
+  if(!window.PDFLib||!window.pdfjsLib)throw new Error('PDF libraries are not available');
+  if(hasArabicText(d))throw new Error(lang==='ar'?'لإنشاء النسخة الرسمية المعبأة، اكتب بيانات الحقول بالأحرف الإنجليزية ثم أعد المحاولة. واجهة الصفحة يمكن أن تبقى بالعربية.':'To create the filled official PDF, enter the field values using English/Latin characters, then try again.');
+  const res=await fetch(OFFICIAL_PDF_URL,{mode:'cors',cache:'no-store'});
+  if(!res.ok)throw new Error('Unable to load the official PDF');
+  const ab=await res.arrayBuffer();
+  const sourceForPdfJs=ab.slice(0);
+  const pdfDoc=await PDFLib.PDFDocument.load(ab);
+  const page=pdfDoc.getPages()[0];
+  const {width,height}=page.getSize();
+  const font=await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+  const bold=await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+  const pdfJsDoc=await pdfjsLib.getDocument({data:new Uint8Array(sourceForPdfJs)}).promise;
+  const p=await pdfJsDoc.getPage(1);
+  const viewport=p.getViewport({scale:1});
+  const tc=await p.getTextContent();
+  const items=tc.items.filter(x=>x.str&&x.str.trim()).map((it,idx)=>{let m=pdfjsLib.Util.transform(viewport.transform,it.transform);return {idx,str:it.str,n:normalizePdfLabel(it.str),x:m[4],yTop:m[5],w:it.width||0,h:it.height||7}});
+  const {draw,mark}=makeTextTools(page,font,bold,width,height);
+  let placedAny=false;
+  function findAny(needles,occ=0){
+    if(!Array.isArray(needles))needles=[needles];
+    let matches=[];
+    needles.forEach(function(needle){
+      let target=normalizePdfLabel(needle);
+      for(let i=0;i<items.length;i++){
+        let first=items[i];
+        if(first.n.includes(target)){matches.push(first);continue}
+        let parts=[],x2=first.x+first.w;
+        for(let j=i;j<Math.min(items.length,i+12);j++){
+          let it=items[j];
+          if(j>i&&Math.abs(it.yTop-first.yTop)>3.5)break;
+          if(j>i&&it.x<items[j-1].x-2)break;
+          if(j>i&&it.x-x2>45)break;
+          parts.push(it.str);
+          x2=Math.max(x2,it.x+it.w);
+          let joined=normalizePdfLabel(parts.join(' '));
+          if(joined.includes(target)){
+            matches.push({idx:first.idx,str:parts.join(' '),n:joined,x:first.x,yTop:first.yTop,w:x2-first.x,h:first.h});
+            break;
+          }
+        }
+      }
+    });
+    matches=matches.filter((m,i,a)=>!a.slice(0,i).some(q=>Math.abs(q.x-m.x)<2&&Math.abs(q.yTop-m.yTop)<2));
+    matches.sort((a,b)=>Math.abs(a.yTop-b.yTop)>2?a.yTop-b.yTop:a.x-b.x);
+    return matches[occ]||null;
+  }
+  function findStarts(needle,occ=0){let n=normalizePdfLabel(needle);return items.filter(it=>it.n.startsWith(n))[occ]||null}
+  function posY(it,dy=-1){return height-it.yTop+dy}
+  function after(needles,value,opt={}){if(!value)return;let it=findAny(needles,opt.occ||0);if(!it)return;let x=(opt.x!=null?opt.x:it.x+it.w+(opt.dx||4));let y=posY(it,opt.dy==null?-1:opt.dy);draw(x,y,value,opt.maxWidth||Math.max(45,width-x-18),opt.size||7,opt.bold?bold:font);placedAny=true}
+  function near(needles,value,opt={}){if(!value)return;let it=findAny(needles,opt.occ||0);if(!it)return;draw(it.x+(opt.dx||0),posY(it,opt.dy==null?-1:opt.dy),value,opt.maxWidth||160,opt.size||7,opt.bold?bold:font)}
+  function checkbox(label,yes){if(!yes)return;let it=findAny(label);if(!it)return;let trimmed=it.str.trim();let prefixed=!/^[A-Za-z]/.test(trimmed);mark(it.x+(prefixed?1:-8),posY(it,-1));placedAny=true}
+  function allToken(token){let n=normalizePdfLabel(token);return items.filter(it=>it.n===n||it.n.startsWith(n+' ')).sort((a,b)=>a.yTop-b.yTop||a.x-b.x)}
+  function yesNoPair(index,value){let nos=allToken('No'), yeses=allToken('Yes');let it=value==='Yes'?yeses[index]:nos[index];if(!it)return;let prefixed=!/^[A-Za-z]/.test(it.str.trim());mark(it.x+(prefixed?1:-8),posY(it,-1));placedAny=true}
+
+  function rowAnswer(needles,value,opt={}){
+    if(!value)return;
+    let it=findAny(needles,opt.occ||0);
+    if(!it)return;
+    let x=width*(opt.xFrac||0.49);
+    let y=posY(it,opt.dy==null?-1:opt.dy);
+    draw(x,y,value,opt.maxWidth||width*(1-(opt.xFrac||0.49))-18,opt.size||6.8,opt.bold?bold:font);
+    placedAny=true;
+  }
+
+  // 1-4
+  rowAnswer(['Name Surname','İsim Soyisim'],d.fullName,{xFrac:.49,maxWidth:width*.43,size:7.2,bold:true});
+  after('Father:',d.fatherName,{maxWidth:120,size:6.8});
+  after('Mother:',d.motherName,{maxWidth:120,size:6.8});
+  rowAnswer('Address in KSA',d.ksaAddress,{xFrac:.49,maxWidth:width*.43,size:6.8});
+  rowAnswer(['Mobile Number & Email Address','Mobile Number'],[d.mobile,d.email].filter(Boolean).join(' / '),{xFrac:.49,maxWidth:width*.43,size:6.4});
+
+  // 5 entry type
+  checkbox('Single Entry',d.entryType==='Single Entry');
+  checkbox('Multiple Entry',d.entryType==='Multiple Entry');
+  checkbox('Double Entry',d.entryType==='Double Entry');
+
+  // 6-9
+  rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
+  rowAnswer('Nationality',d.nationality,{xFrac:.49,maxWidth:width*.43,size:6.8});
+  after('ID Number:',d.residentId,{maxWidth:130,size:6.6});
+  after('Expiration Date:',fmtPdfDate(d.residentExpiry),{maxWidth:90,size:6.6});
+  rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
+
+  // 10 marital
+  checkbox(['Single/Bekar'],d.marital==='Single');
+  checkbox(['Married/EVLI'],d.marital==='Married');
+
+  // 11-17
+  rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
+  checkbox(['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant');
+  checkbox(['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')after(['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:48,maxWidth:190,size:6.4});
+  rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
+  rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
+  rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
+
+  // 18, 21-24 Yes/No groups in page order
+  yesNoPair(0,d.property); if(d.property==='Yes')after('Yes (Specify',d.propertyDetails,{occ:0,dx:8,maxWidth:190,size:6.2});
+  after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
+  after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
+  rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
+  yesNoPair(1,d.travellingWith); if(d.travellingWith==='Yes')after('Yes (Specify',d.travellingDetails,{occ:1,dx:8,maxWidth:190,size:6.2});
+  yesNoPair(2,d.ksaRelatives); if(d.ksaRelatives==='Yes')after('Yes (Specify',d.ksaRelativesDetails,{occ:2,dx:8,maxWidth:190,size:6.2});
+  yesNoPair(3,d.turkishRelatives); if(d.turkishRelatives==='Yes')after('Yes (Specify',d.turkishRelativesDetails,{occ:3,dx:8,maxWidth:190,size:6.2});
+  yesNoPair(4,d.oldPassport); if(d.oldPassport==='Yes')after('Passport Number:',d.oldPassportNumber,{maxWidth:165,size:6.2});
+
+  // Previous visa history table (up to 4 rows to preserve the official single-page layout)
+  if(d.history&&d.history.length){
+    let country=findAny('Country/Ülke'), duration=findAny('Duration/Süre'), from=findAny('From/..den'), to=findAny('To/..kadar'), city=findAny('City of Entry');
+    let header=country||duration||from||to||city;
+    if(header){
+      let baseY=posY(header,-12);
+      d.history.slice(0,4).forEach((r,i)=>{let y=baseY-i*10.5;if(country)draw(country.x,y,r.country,Math.max(65,(duration?duration.x:country.x+95)-country.x-5),5.7);if(duration)draw(duration.x,y,r.duration,Math.max(50,(from?from.x:duration.x+75)-duration.x-5),5.7);if(from)draw(from.x,y,fmtPdfDate(r.from),55,5.4);if(to)draw(to.x,y,fmtPdfDate(r.to),55,5.4);if(city)draw(city.x,y,r.city,width-city.x-16,5.7)});
+    }
+  }
+
+  // Applicant name above the signature/name label. Signature remains blank for manual signing.
+  let sig=findAny('APPLICANT NAME SURNAME');
+  if(sig)draw(sig.x,posY(sig,11),d.fullName,180,6.6,bold);
+
+  if(!placedAny)throw new Error(lang==='ar'?'تعذر تحديد أماكن الخانات داخل النموذج الرسمي، لذلك لم يتم إنشاء ملف فارغ.':'Could not detect the field positions in the official form, so a blank file was not created.');
+  const out=await pdfDoc.save();
+  return new Blob([out],{type:'application/pdf'});
+}
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  let d=getData();
+  if(!d.fullName){document.getElementById('errorMsg').classList.add('show');form.elements.fullName.focus();return}
+  document.getElementById('errorMsg').classList.remove('show');saveDraft();
+  const btn=document.getElementById('submitBtn');btn.disabled=true;
+  statusMsg(lang==='ar'?'جاري تجهيز نسخة النموذج الرسمي ببياناتك…':'Creating the filled official form…');
+  const popup=window.open('','_blank');
+  if(popup){popup.document.write('<!doctype html><meta charset="utf-8"><title>Preparing PDF…</title><style>body{font-family:Arial,sans-serif;display:grid;place-items:center;height:100vh;margin:0;background:#f5f6f8;color:#222}div{text-align:center;line-height:1.8}</style><div>Preparing your filled official visa form…<br>Please wait.</div>');popup.document.close()}
+  try{
+    const blob=await generateFilledOfficialPdf(d);
+    const url=URL.createObjectURL(blob);
+    statusMsg(lang==='ar'?'تم إنشاء النسخة الرسمية المعبأة. افتُتحت في صفحة جديدة للمراجعة والطباعة والتوقيع.':'The filled official form is ready and has opened in a new tab for review, printing and signature.');
+    if(popup)popup.location.href=url;else window.location.href=url;
+    setTimeout(()=>URL.revokeObjectURL(url),300000);
+  }catch(err){
+    if(popup&&!popup.closed)popup.close();
+    console.error(err);
+    statusMsg((lang==='ar'?'تعذر إنشاء ملف PDF الرسمي تلقائيًا: ':'Could not generate the official PDF automatically: ')+(err&&err.message?err.message:''),true);
+    renderPreview(d);document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
+  }finally{btn.disabled=false}
+});
+document.getElementById('editBtn').addEventListener('click',()=>{document.body.classList.remove('preview-mode');history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'})});
+restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){renderPreview(d);document.body.classList.add('preview-mode')}}
+</script>
+</body>
+</html>
