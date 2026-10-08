@@ -243,15 +243,21 @@ async function generateFilledOfficialPdf(d){
   // are split differently by PDF.js on some browsers/devices.
   const REF_W=595.28, REF_H=841.89;
   const sx=width/REF_W, sy=height/REF_H;
-  function markFixed(x,y,enabled){if(!enabled)return;mark(x*sx,y*sy);placedAny=true}
+  function checkFixed(x,y,enabled){
+    if(!enabled)return;
+    const X=x*sx, Y=y*sy;
+    page.drawLine({start:{x:X-1.2,y:Y+1.5},end:{x:X+1.0,y:Y-1.0},thickness:1.5,color:PDFLib.rgb(.72,.08,.12)});
+    page.drawLine({start:{x:X+1.0,y:Y-1.0},end:{x:X+4.8,y:Y+4.2},thickness:1.5,color:PDFLib.rgb(.72,.08,.12)});
+    placedAny=true;
+  }
   function drawFixed(x,y,value,maxWidth=160,size=6.4,isBold=false){
     if(!value)return;draw(x*sx,y*sy,value,maxWidth*sx,size,isBold?bold:font);placedAny=true
   }
 
   // 5 entry type
-  markFixed(279.5,696.5,d.entryType==='Single Entry');
-  markFixed(373.5,696.5,d.entryType==='Multiple Entry');
-  markFixed(477.5,696.5,d.entryType==='Double Entry');
+  checkFixed(285.0,712.0,d.entryType==='Single Entry');
+  checkFixed(369.0,712.0,d.entryType==='Multiple Entry');
+  checkFixed(461.0,712.0,d.entryType==='Double Entry');
 
   // 6-9
   rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
@@ -261,55 +267,55 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  markFixed(279.5,592.5,d.marital==='Single');
-  markFixed(386.0,592.5,d.marital==='Married');
+  checkFixed(285.0,619.4,d.marital==='Single');
+  checkFixed(380.0,619.4,d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  markFixed(279.5,548.0,d.expenses==='Applicant');
-  markFixed(279.5,536.3,d.expenses==='Sponsor');
-  if(d.expenses==='Sponsor')drawFixed(359.0,536.0,d.sponsorName,185,6.2);
+  checkFixed(285.0,580.0,d.expenses==='Applicant');
+  checkFixed(285.0,571.2,d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')drawFixed(365.0,569.8,d.sponsorName,185,6.2);
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 18, 21-24 fixed Yes/No groups
-  markFixed(279.5,402.5,d.property==='No');
-  markFixed(309.5,402.5,d.property==='Yes');
-  if(d.property==='Yes')drawFixed(390.0,401.8,d.propertyDetails,170,6.2);
+  checkFixed(285.0,453.1,d.property==='No');
+  checkFixed(312.0,453.1,d.property==='Yes');
+  if(d.property==='Yes')drawFixed(355.0,451.8,d.propertyDetails,205,6.2);
 
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
 
-  markFixed(279.5,319.8,d.travellingWith==='No');
-  markFixed(309.5,319.8,d.travellingWith==='Yes');
-  if(d.travellingWith==='Yes')drawFixed(390.0,319.2,d.travellingDetails,170,6.2);
+  checkFixed(285.0,380.1,d.travellingWith==='No');
+  checkFixed(312.0,380.1,d.travellingWith==='Yes');
+  if(d.travellingWith==='Yes')drawFixed(355.0,378.8,d.travellingDetails,205,6.2);
 
-  markFixed(279.5,295.0,d.ksaRelatives==='No');
-  markFixed(309.5,295.0,d.ksaRelatives==='Yes');
-  if(d.ksaRelatives==='Yes')drawFixed(390.0,294.4,d.ksaRelativesDetails,170,6.2);
+  checkFixed(285.0,356.8,d.ksaRelatives==='No');
+  checkFixed(312.0,356.8,d.ksaRelatives==='Yes');
+  if(d.ksaRelatives==='Yes')drawFixed(355.0,355.5,d.ksaRelativesDetails,205,6.2);
 
-  markFixed(279.5,269.4,d.turkishRelatives==='No');
-  markFixed(309.5,269.4,d.turkishRelatives==='Yes');
-  if(d.turkishRelatives==='Yes')drawFixed(390.0,268.8,d.turkishRelativesDetails,170,6.2);
+  checkFixed(285.0,337.1,d.turkishRelatives==='No');
+  checkFixed(312.0,337.1,d.turkishRelatives==='Yes');
+  if(d.turkishRelatives==='Yes')drawFixed(355.0,335.8,d.turkishRelativesDetails,205,6.2);
 
-  markFixed(279.5,249.6,d.oldPassport==='No');
-  markFixed(309.5,249.6,d.oldPassport==='Yes');
-  if(d.oldPassport==='Yes')drawFixed(420.0,249.0,d.oldPassportNumber,135,6.2);
+  checkFixed(285.0,317.4,d.oldPassport==='No');
+  checkFixed(312.0,317.4,d.oldPassport==='Yes');
+  if(d.oldPassport==='Yes')drawFixed(395.0,316.1,d.oldPassportNumber,165,6.2);
 
   // Previous visa history table - fixed cells in the official form.
   // The form has three visible rows; extra rows stay in the helper draft but are not
   // stamped into the one-page official form.
   if(d.history&&d.history.length){
-    const ys=[188.5,174.2,160.0];
+    const ys=[263.0,249.0,235.0];
     d.history.slice(0,3).forEach((r,i)=>{
       const y=ys[i];
-      drawFixed(10.0,y,r.country,198,5.7);
-      drawFixed(217.0,y,r.duration,78,5.7);
-      drawFixed(306.0,y,fmtPdfDate(r.from),80,5.4);
-      drawFixed(399.0,y,fmtPdfDate(r.to),80,5.4);
-      drawFixed(490.0,y,r.city,92,5.7);
+      drawFixed(36.0,y,r.country,180,5.7);
+      drawFixed(226.0,y,r.duration,70,5.7);
+      drawFixed(304.0,y,fmtPdfDate(r.from),76,5.4);
+      drawFixed(386.0,y,fmtPdfDate(r.to),76,5.4);
+      drawFixed(468.0,y,r.city,105,5.7);
     });
   }
 
