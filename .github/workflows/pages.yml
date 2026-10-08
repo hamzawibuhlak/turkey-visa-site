@@ -29,6 +29,8 @@ jobs:
           convert /tmp/istanbul.png -strip -quality 88 _site/og-istanbul.jpg
           convert /tmp/visa.png -strip -quality 88 _site/og-visa.jpg
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
