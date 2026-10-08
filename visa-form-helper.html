@@ -18,7 +18,7 @@
 
 .pdf-status{display:none;margin:10px 0 0;padding:10px 12px;border-radius:13px;background:#eef5ff;border:1px solid #d8e7fb;color:#315b88;font-size:10.5px;line-height:1.7}.pdf-status.show{display:block}.pdf-status.error{background:#fff0f1;border-color:#f1cdd0;color:#9d2730}.primary[disabled]{opacity:.62;cursor:wait}
 @media(max-width:620px){.shell{width:min(100% - 16px,820px)}.topbar{top:6px;border-radius:18px}.grid{grid-template-columns:1fr}.section{padding:14px;border-radius:18px}.hero{border-radius:22px;padding:19px 16px}.hero h1{font-size:25px}.line{grid-template-columns:1fr;gap:2px;padding:7px 0}.line .value{padding-inline-start:8px}.visa-table{display:block;overflow-x:auto;white-space:nowrap}.actions{bottom:6px}.preview-card{padding:14px}.preview-actions{flex-wrap:wrap}}
-@media print{body{background:#fff}.shell{width:100%;padding:0}.topbar,.hero,.privacy,#editor,.preview-actions,.small-note{display:none!important}#preview{display:block!important}.preview-card{margin:0;border:0;border-radius:0;box-shadow:none;padding:0}.preview-badge{display:none}.line{font-size:9.5px;padding:3.5px 0}.preview-head h1{font-size:18px}.visa-history{font-size:8px}.declaration{font-size:8px}}
+@media print{body{background:#fff}.shell{width:100%;padding:0}.topbar,.hero,.privacy,#editor,.preview-actions,.small-note,.preview-head{display:none!important}#preview{display:block!important}.preview-card{margin:0;border:0;border-radius:0;box-shadow:none;padding:0}#officialCanvas{width:100%!important;border:0!important}}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -92,14 +92,11 @@
 
   <div id="preview">
     <div class="preview-card">
-      <div class="preview-head"><h1>VISA APPLICATION FORM</h1><span class="preview-badge" data-i18n="draftBadge">معاينة احتياطية للبيانات</span></div>
-      <div class="form-lines" id="previewLines"></div>
-      <table class="visa-history"><thead><tr><th>Country</th><th>Duration</th><th>Date From</th><th>Date To</th><th>City of Entry</th></tr></thead><tbody id="previewHistory"></tbody></table>
-      <div class="declaration"><strong>I/We, the undersigned, hereby declare that:</strong><br><span>This draft is provided to help transfer your information to the official application form. Please review all details against the official form before submission.</span></div>
-      <div class="signature"><div><div class="sigline" id="sigName"></div><div>APPLICANT NAME SURNAME</div></div><div><div class="sigline"></div><div>SIGNATURE</div></div></div>
+      <div class="preview-head"><h1>VISA APPLICATION FORM</h1><span class="preview-badge">معاينة النموذج قبل الطباعة</span></div>
+      <canvas id="officialCanvas" aria-label="معاينة النموذج الرسمي المعبأ" style="display:block;width:100%;height:auto;background:#fff;border:1px solid #ddd"></canvas>
     </div>
-    <div class="preview-actions"><button class="print-btn" onclick="window.print()" data-i18n="print">طباعة / حفظ PDF</button><button class="edit-btn" id="editBtn" data-i18n="edit">تعديل البيانات</button><a class="pdf-btn" target="_blank" rel="noopener noreferrer" href="https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf" data-i18n="officialPdf">فتح النموذج الرسمي PDF</a></div>
-    <div class="small-note" data-i18n="previewNote">هذه الصفحة مساعدة لتجهيز البيانات وليست بديلاً عن النموذج الرسمي. راجع البيانات ثم انقلها/اطبعها حسب متطلبات مركز التقديم.</div>
+    <div class="preview-actions"><button class="print-btn" id="exportPdfBtn" type="button">فتح PDF للطباعة</button><button class="edit-btn" id="editBtn" type="button" data-i18n="edit">تعديل البيانات</button><a class="pdf-btn" target="_blank" rel="noopener noreferrer" href="https://assets.ctfassets.net/xxg4p8gt3sg6/1HvENUAsn7bfUiJwnlqE2P/0edee1ab9c4bcf83b31bb5f9af8e554c/Visa-Application-Form%C3%A2__Saudi-Arabia-May-2026.pdf" data-i18n="officialPdf">فتح النموذج الرسمي PDF</a></div>
+    <div class="small-note">المعاينة أعلاه هي نسخة صورة من النموذج الرسمي مع بياناتك فوقها. عند الضغط على «فتح PDF للطباعة» سيتم إنشاء PDF مطابق للمعاينة.</div>
   </div>
 </div>
 <script>
@@ -141,6 +138,139 @@ function makeTextTools(page,font,bold,width,height){
   function mark(x,y){page.drawText('X',{x,y,size:8,font:bold,color:PDFLib.rgb(.72,.08,.12)})}
   return {draw,mark};
 }
+
+let rasterPreviewState={data:null,jpeg:null,pageWidth:595.28,pageHeight:841.89};
+
+function canvasText(ctx,scale,x,y,text,maxWidth=250,size=6.2,bold=false){
+  text=cleanPdfText(text); if(!text)return;
+  ctx.save();
+  ctx.fillStyle='#111';
+  ctx.textBaseline='alphabetic';
+  let s=size;
+  ctx.font=(bold?'700 ':'')+(s*scale)+'px Arial, Helvetica, sans-serif';
+  while(s>4.6 && ctx.measureText(text).width>maxWidth*scale){
+    s-=0.2; ctx.font=(bold?'700 ':'')+(s*scale)+'px Arial, Helvetica, sans-serif';
+  }
+  let out=text;
+  while(out.length>2 && ctx.measureText(out).width>maxWidth*scale) out=out.slice(0,-1);
+  if(out!==text)out+='…';
+  ctx.fillText(out,x*scale,y*scale);
+  ctx.restore();
+}
+function canvasCheck(ctx,scale,x,y,enabled){
+  if(!enabled)return;
+  ctx.save();
+  ctx.strokeStyle='#b51222'; ctx.lineWidth=Math.max(1.25,1.15*scale); ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  ctx.moveTo((x-1.0)*scale,(y+0.8)*scale);
+  ctx.lineTo((x+0.7)*scale,(y+2.5)*scale);
+  ctx.lineTo((x+4.8)*scale,(y-2.5)*scale);
+  ctx.stroke(); ctx.restore();
+}
+async function buildRasterPreview(d){
+  if(hasArabicText(d))throw new Error(lang==='ar'?'لإنشاء النسخة الرسمية المعبأة، اكتب بيانات الحقول بالأحرف الإنجليزية ثم أعد المحاولة. واجهة الصفحة يمكن أن تبقى بالعربية.':'To create the filled official PDF, enter the field values using English/Latin characters, then try again.');
+  const res=await fetch(OFFICIAL_PDF_URL,{mode:'cors',cache:'no-store'});
+  if(!res.ok)throw new Error('Unable to load the official PDF');
+  const ab=await res.arrayBuffer();
+  const doc=await pdfjsLib.getDocument({data:new Uint8Array(ab)}).promise;
+  const page=await doc.getPage(1);
+  const base=page.getViewport({scale:1});
+  const pageW=base.width,pageH=base.height;
+  const renderScale=2.55;
+  const vp=page.getViewport({scale:renderScale});
+  const canvas=document.getElementById('officialCanvas');
+  canvas.width=Math.round(vp.width); canvas.height=Math.round(vp.height);
+  const ctx=canvas.getContext('2d',{alpha:false});
+  await page.render({canvasContext:ctx,viewport:vp,background:'#fff'}).promise;
+  const s=vp.width/pageW;
+
+  // Text fields - coordinates are in the rendered page's top-left coordinate system.
+  canvasText(ctx,s,284,63,d.fullName,250,6.6,true);
+  canvasText(ctx,s,284,81,d.fatherName,105,6.1);
+  canvasText(ctx,s,425,81,d.motherName,105,6.1);
+  canvasText(ctx,s,284,99,d.ksaAddress,270,6.0);
+  canvasText(ctx,s,284,117,[d.mobile,d.email].filter(Boolean).join(' / '),280,5.5);
+
+  canvasCheck(ctx,s,277,133,d.entryType==='Single Entry');
+  canvasCheck(ctx,s,365,133,d.entryType==='Multiple Entry');
+  canvasCheck(ctx,s,456,133,d.entryType==='Double Entry');
+
+  canvasText(ctx,s,284,156,d.purpose,270,6.0);
+  canvasText(ctx,s,284,174,d.nationality,270,6.0);
+  canvasText(ctx,s,306,199,d.residentId,92,5.6);
+  canvasText(ctx,s,483,199,fmtPdfDate(d.residentExpiry),72,5.6);
+  canvasText(ctx,s,284,211,d.birthPlace,270,6.0);
+
+  canvasCheck(ctx,s,277,227,d.marital==='Single');
+  canvasCheck(ctx,s,374,227,d.marital==='Married');
+  canvasText(ctx,s,284,247,d.ksaDuration,270,5.8);
+
+  canvasCheck(ctx,s,277,268,d.expenses==='Applicant');
+  canvasCheck(ctx,s,277,279,d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')canvasText(ctx,s,356,279,d.sponsorName,195,5.6);
+
+  canvasText(ctx,s,284,296,d.occupation,270,5.8);
+  // 14 and 15 are intentionally left blank for VFS staff.
+  canvasText(ctx,s,284,352,d.company,270,5.8);
+  canvasText(ctx,s,284,371,d.workDuration,270,5.8);
+
+  canvasCheck(ctx,s,277,400,d.property==='No');
+  canvasCheck(ctx,s,304,400,d.property==='Yes');
+  if(d.property==='Yes')canvasText(ctx,s,354,400,d.propertyDetails,198,5.5);
+
+  canvasText(ctx,s,355,414,fmtPdfDate(d.departure),95,5.5);
+  canvasText(ctx,s,355,433,fmtPdfDate(d.arrival),95,5.5);
+  canvasText(ctx,s,284,445,d.stayPlace,270,5.8);
+
+  canvasCheck(ctx,s,277,475,d.travellingWith==='No');
+  canvasCheck(ctx,s,304,475,d.travellingWith==='Yes');
+  if(d.travellingWith==='Yes')canvasText(ctx,s,354,475,d.travellingDetails,198,5.5);
+
+  canvasCheck(ctx,s,277,497,d.ksaRelatives==='No');
+  canvasCheck(ctx,s,304,497,d.ksaRelatives==='Yes');
+  if(d.ksaRelatives==='Yes')canvasText(ctx,s,354,497,d.ksaRelativesDetails,198,5.5);
+
+  canvasCheck(ctx,s,277,518,d.turkishRelatives==='No');
+  canvasCheck(ctx,s,304,518,d.turkishRelatives==='Yes');
+  if(d.turkishRelatives==='Yes')canvasText(ctx,s,354,518,d.turkishRelativesDetails,198,5.5);
+
+  canvasCheck(ctx,s,277,539,d.oldPassport==='No');
+  canvasCheck(ctx,s,304,539,d.oldPassport==='Yes');
+  if(d.oldPassport==='Yes')canvasText(ctx,s,382,539,d.oldPassportNumber,168,5.5);
+
+  const hy=[589,603,617];
+  (d.history||[]).slice(0,3).forEach((r,i)=>{
+    canvasText(ctx,s,35,hy[i],r.country,175,5.4);
+    canvasText(ctx,s,218,hy[i],r.duration,75,5.4);
+    canvasText(ctx,s,303,hy[i],fmtPdfDate(r.from),76,5.0);
+    canvasText(ctx,s,387,hy[i],fmtPdfDate(r.to),76,5.0);
+    canvasText(ctx,s,470,hy[i],r.city,105,5.4);
+  });
+
+  // Applicant name near signature area at the bottom of the official form.
+  canvasText(ctx,s,87,786,d.fullName,180,6.0,true);
+
+  rasterPreviewState={data:d,jpeg:canvas.toDataURL('image/jpeg',0.94),pageWidth:pageW,pageHeight:pageH};
+  return rasterPreviewState;
+}
+async function openRasterPdf(){
+  try{
+    if(!rasterPreviewState.jpeg)throw new Error('Create the preview first');
+    const pdf=await PDFLib.PDFDocument.create();
+    const img=await pdf.embedJpg(rasterPreviewState.jpeg);
+    const pg=pdf.addPage([rasterPreviewState.pageWidth,rasterPreviewState.pageHeight]);
+    pg.drawImage(img,{x:0,y:0,width:rasterPreviewState.pageWidth,height:rasterPreviewState.pageHeight});
+    const bytes=await pdf.save();
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const url=URL.createObjectURL(blob);
+    window.open(url,'_blank');
+    setTimeout(()=>URL.revokeObjectURL(url),300000);
+  }catch(err){
+    console.error(err);
+    statusMsg((lang==='ar'?'تعذر إنشاء PDF للطباعة: ':'Could not create printable PDF: ')+(err?.message||''),true);
+  }
+}
+
 async function generateFilledOfficialPdf(d){
   if(!window.PDFLib||!window.pdfjsLib)throw new Error('PDF libraries are not available');
   if(hasArabicText(d))throw new Error(lang==='ar'?'لإنشاء النسخة الرسمية المعبأة، اكتب بيانات الحقول بالأحرف الإنجليزية ثم أعد المحاولة. واجهة الصفحة يمكن أن تبقى بالعربية.':'To create the filled official PDF, enter the field values using English/Latin characters, then try again.');
@@ -329,28 +459,23 @@ async function generateFilledOfficialPdf(d){
 }
 form.addEventListener('submit',async e=>{
   e.preventDefault();
-  let d=getData();
+  const d=getData();
   if(!d.fullName){document.getElementById('errorMsg').classList.add('show');form.elements.fullName.focus();return}
   document.getElementById('errorMsg').classList.remove('show');saveDraft();
   const btn=document.getElementById('submitBtn');btn.disabled=true;
-  statusMsg(lang==='ar'?'جاري تجهيز نسخة النموذج الرسمي ببياناتك…':'Creating the filled official form…');
-  const popup=window.open('','_blank');
-  if(popup){popup.document.write('<!doctype html><meta charset="utf-8"><title>Preparing PDF…</title><style>body{font-family:Arial,sans-serif;display:grid;place-items:center;height:100vh;margin:0;background:#f5f6f8;color:#222}div{text-align:center;line-height:1.8}</style><div>Preparing your filled official visa form…<br>Please wait.</div>');popup.document.close()}
+  statusMsg(lang==='ar'?'جاري تجهيز معاينة النموذج الرسمي…':'Preparing the official form preview…');
   try{
-    const blob=await generateFilledOfficialPdf(d);
-    const url=URL.createObjectURL(blob);
-    statusMsg(lang==='ar'?'تم إنشاء النسخة الرسمية المعبأة. افتُتحت في صفحة جديدة للمراجعة والطباعة والتوقيع.':'The filled official form is ready and has opened in a new tab for review, printing and signature.');
-    if(popup)popup.location.href=url;else window.location.href=url;
-    setTimeout(()=>URL.revokeObjectURL(url),300000);
+    await buildRasterPreview(d);
+    statusMsg(lang==='ar'?'تم تجهيز النموذج. راجع المعاينة ثم اضغط «فتح PDF للطباعة».':'The form is ready. Review the preview, then open the printable PDF.');
+    document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
   }catch(err){
-    if(popup&&!popup.closed)popup.close();
     console.error(err);
-    statusMsg((lang==='ar'?'تعذر إنشاء ملف PDF الرسمي تلقائيًا: ':'Could not generate the official PDF automatically: ')+(err&&err.message?err.message:''),true);
-    renderPreview(d);document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
+    statusMsg((lang==='ar'?'تعذر تجهيز النموذج: ':'Could not prepare the form: ')+(err&&err.message?err.message:''),true);
   }finally{btn.disabled=false}
 });
+document.getElementById('exportPdfBtn').addEventListener('click',openRasterPdf);
 document.getElementById('editBtn').addEventListener('click',()=>{document.body.classList.remove('preview-mode');history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'})});
-restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){renderPreview(d);document.body.classList.add('preview-mode')}}
+restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){buildRasterPreview(d).then(()=>document.body.classList.add('preview-mode')).catch(console.error)}}
 </script>
 </body>
 </html>
