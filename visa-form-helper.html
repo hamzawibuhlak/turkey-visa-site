@@ -413,12 +413,21 @@ form.addEventListener('submit',async e=>{
   }catch(err){
     if(popup&&!popup.closed)popup.close();
     console.error(err);
-    statusMsg((lang==='ar'?'تعذر إنشاء ملف PDF الرسمي تلقائيًا: ':'Could not generate the official PDF automatically: ')+(err&&err.message?err.message:''),true);
-    renderPreview(d);document.body.classList.add('preview-mode');location.hash='filled';window.scrollTo({top:0,behavior:'smooth'});
+    const detail=(err&&err.message?err.message:'');
+    statusMsg(
+      (lang==='ar'
+        ?'لم يتم إنشاء أي نموذج بديل. تعذر إنشاء نسخة الـPDF الرسمية فقط. استخدم أحرفًا إنجليزية/لاتينية في البيانات ثم أعد المحاولة. '
+        :'No replacement form was created. Only the official PDF generation failed. Use English/Latin characters for the entered data and try again. ')
+      +detail,
+      true
+    );
+    document.body.classList.remove('preview-mode');
+    history.replaceState(null,'',location.pathname+location.search);
+    window.scrollTo({top:0,behavior:'smooth'});
   }finally{btn.disabled=false}
 });
 document.getElementById('editBtn').addEventListener('click',()=>{document.body.classList.remove('preview-mode');history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:'smooth'})});
-restore();setLang(lang);if(location.hash==='#filled'){let d=getData();if(d.fullName){renderPreview(d);document.body.classList.add('preview-mode')}}
+restore();setLang(lang);if(location.hash==='#filled'){history.replaceState(null,'',location.pathname+location.search)}
 </script>
 </body>
 </html>
