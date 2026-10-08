@@ -139,9 +139,9 @@ function makeTextTools(page,font,bold,width,height){
   function fit(txt,maxWidth,size=7,min=4.7,f=font){txt=cleanPdfText(txt);if(!txt)return {txt:'',size};let s=size;while(s>min&&f.widthOfTextAtSize(txt,s)>maxWidth)s-=.25;if(f.widthOfTextAtSize(txt,s)<=maxWidth)return {txt,size:s};let out=txt;while(out.length>2&&f.widthOfTextAtSize(out+'…',s)>maxWidth)out=out.slice(0,-1);return {txt:out+'…',size:s}}
   function draw(x,y,txt,maxWidth=width-x-18,size=7,f=font){if(!txt)return;let q=fit(txt,Math.max(18,maxWidth),size,4.7,f);page.drawText(q.txt,{x,y,size:q.size,font:f,color:PDFLib.rgb(.08,.08,.1)})}
   function mark(x,y){
-    const color=PDFLib.rgb(.72,.08,.12);
-    page.drawLine({start:{x:x,y:y+1.5},end:{x:x+2.2,y:y-0.7},thickness:1.15,color});
-    page.drawLine({start:{x:x+2.2,y:y-0.7},end:{x:x+6.4,y:y+4.7},thickness:1.15,color});
+    const color=PDFLib.rgb(.08,.08,.1);
+    page.drawLine({start:{x:x,y:y+1.1},end:{x:x+1.9,y:y-0.7},thickness:1.0,color});
+    page.drawLine({start:{x:x+1.9,y:y-0.7},end:{x:x+5.2,y:y+3.4},thickness:1.0,color});
   }
   return {draw,mark};
 }
@@ -267,13 +267,37 @@ async function generateFilledOfficialPdf(d){
   }
   function checkRowToken(rowNum,needles,enabled,opt={}){
     if(!enabled)return;
+    const rowItems=rowBandItems(rowNum);
     const it=rowBandToken(rowNum,needles,{minX:opt.minX==null?width*.45:opt.minX,occ:opt.occ||0});
     if(!it)return;
-    const raw=String(it.str||'');
-    const hasBoxPrefix=/^[^A-Za-z0-9]/.test(raw.trim());
-    const x=it.x+(hasBoxPrefix?1:-8)+(opt.dx||0);
-    const y=posY(it,opt.dy==null?0:opt.dy);
-    mark(x,y); placedAny=true;
+
+    // Prefer the actual checkbox glyph/item immediately before the label.
+    // Some PDF.js/browser versions split the square into a separate text item,
+    // while others keep it attached to the label. This handles both cases.
+    const sameLine=rowItems.filter(q=>Math.abs(q.yTop-it.yTop)<=3.5 && q.x<=it.x && (it.x-(q.x+q.w))<=18);
+    const boxItem=sameLine
+      .filter(q=>{
+        const s=String(q.str||'').trim();
+        if(!s)return false;
+        if(/[☐□▢◻◽]/.test(s))return true;
+        return s.length<=2 && !/[A-Za-z0-9]/.test(s);
+      })
+      .sort((a,b)=>Math.abs((a.x+a.w)-it.x)-Math.abs((b.x+b.w)-it.x))[0]||null;
+
+    const raw=String(it.str||'').trim();
+    let x,y;
+    if(boxItem){
+      x=boxItem.x + Math.max(0.8, boxItem.w*0.18);
+      y=posY(boxItem,1.1);
+    }else if(/^[☐□▢◻◽]/.test(raw)){
+      x=it.x+1.0;
+      y=posY(it,1.1);
+    }else{
+      // Fallback: standard box position relative to the printed label.
+      x=it.x-8.3;
+      y=posY(it,1.1);
+    }
+    mark(x+(opt.dx||0),y+(opt.dy||0)); placedAny=true;
   }
   function writeAfterRowToken(rowNum,needles,value,opt={}){
     if(!value)return;
