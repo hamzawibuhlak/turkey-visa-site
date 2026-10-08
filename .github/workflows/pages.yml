@@ -19,7 +19,12 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp -R index.html istanbul.html istanbul-data.js visa.html visa-content.html visa-form-helper.html og-home-final.png og-istanbul-final.png og-visa-final.png .nojekyll _site/
+          cp -R index.html istanbul.html istanbul-data.js visa.html visa-content.html visa-form-helper.html .nojekyll _site/
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick >/dev/null
+          convert og-home-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-home-final-v2.jpg
+          convert og-istanbul-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-istanbul-final-v2.jpg
+          convert og-visa-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-visa-final-v2.jpg
       - uses: actions/configure-pages@v5
         with:
           enablement: true
