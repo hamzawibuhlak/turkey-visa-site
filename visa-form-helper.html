@@ -193,8 +193,33 @@ async function generateFilledOfficialPdf(d){
   function after(needles,value,opt={}){if(!value)return;let it=findAny(needles,opt.occ||0);if(!it)return;let x=(opt.x!=null?opt.x:it.x+it.w+(opt.dx||4));let y=posY(it,opt.dy==null?-1:opt.dy);draw(x,y,value,opt.maxWidth||Math.max(45,width-x-18),opt.size||7,opt.bold?bold:font);placedAny=true}
   function near(needles,value,opt={}){if(!value)return;let it=findAny(needles,opt.occ||0);if(!it)return;draw(it.x+(opt.dx||0),posY(it,opt.dy==null?-1:opt.dy),value,opt.maxWidth||160,opt.size||7,opt.bold?bold:font)}
   function checkbox(label,yes){if(!yes)return;let it=findAny(label);if(!it)return;let trimmed=it.str.trim();let prefixed=!/^[A-Za-z]/.test(trimmed);mark(it.x+(prefixed?1:-8),posY(it,-1));placedAny=true}
-  function allToken(token){let n=normalizePdfLabel(token);return items.filter(it=>it.n===n||it.n.startsWith(n+' ')).sort((a,b)=>a.yTop-b.yTop||a.x-b.x)}
-  function yesNoPair(index,value){let nos=allToken('No'), yeses=allToken('Yes');let it=value==='Yes'?yeses[index]:nos[index];if(!it)return;let prefixed=!/^[A-Za-z]/.test(it.str.trim());mark(it.x+(prefixed?1:-8),posY(it,-1));placedAny=true}
+  function rowToken(rowNeedles,tokenNeedles,opt={}){
+    let row=findAny(rowNeedles,opt.rowOcc||0); if(!row)return null;
+    if(!Array.isArray(tokenNeedles))tokenNeedles=[tokenNeedles];
+    let ns=tokenNeedles.map(normalizePdfLabel);
+    let maxDy=opt.maxDy==null?24:opt.maxDy;
+    let minX=opt.minX==null?width*.45:opt.minX;
+    let candidates=items.filter(it=>it.x>=minX&&Math.abs(it.yTop-row.yTop)<=maxDy&&ns.some(n=>it.n===n||it.n.startsWith(n+' ')||it.n.includes(n)));
+    candidates.sort((a,b)=>Math.abs(a.yTop-row.yTop)-Math.abs(b.yTop-row.yTop)||a.x-b.x);
+    return candidates[opt.occ||0]||null;
+  }
+  function markRowChoice(rowNeedles,tokenNeedles,enabled,opt={}){
+    if(!enabled)return;
+    let it=rowToken(rowNeedles,tokenNeedles,opt); if(!it)return;
+    let trimmed=it.str.trim(), prefixed=!/^[A-Za-z]/.test(trimmed);
+    mark(it.x+(prefixed?1:-8),posY(it,-1)); placedAny=true;
+  }
+  function yesNoRow(rowNeedles,value,opt={}){
+    if(value!=='Yes'&&value!=='No')return;
+    markRowChoice(rowNeedles,value,value===value,opt);
+  }
+  function afterRowToken(rowNeedles,tokenNeedles,value,opt={}){
+    if(!value)return;
+    let it=rowToken(rowNeedles,tokenNeedles,opt); if(!it)return;
+    let x=it.x+it.w+(opt.dx==null?6:opt.dx);
+    draw(x,posY(it,opt.dy==null?-1:opt.dy),value,opt.maxWidth||Math.max(50,width-x-18),opt.size||6.2,font);
+    placedAny=true;
+  }
 
   function rowAnswer(needles,value,opt={}){
     if(!value)return;
@@ -226,27 +251,32 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  checkbox(['Single/Bekar'],d.marital==='Single');
-  checkbox(['Married/EVLI'],d.marital==='Married');
+  markRowChoice(['Marital Status','Medeni Durumu'],['Single/Bekar','Single'],d.marital==='Single');
+  markRowChoice(['Marital Status','Medeni Durumu'],['Married/EVLI','Married'],d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  checkbox(['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant');
-  checkbox(['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor');
-  if(d.expenses==='Sponsor')after(['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:48,maxWidth:190,size:6.4});
+  markRowChoice(['Who covers the expenses','Masrafları kim karşılıyor'],['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant',{maxDy:28});
+  markRowChoice(['Who covers the expenses','Masrafları kim karşılıyor'],['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor',{maxDy:28});
+  if(d.expenses==='Sponsor')afterRowToken(['Who covers the expenses','Masrafları kim karşılıyor'],['Sponsor (Name:','Sponsor'],d.sponsorName,{maxDy:28,dx:8,maxWidth:185,size:6.2});
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 18, 21-24 Yes/No groups in page order
-  yesNoPair(0,d.property); if(d.property==='Yes')after('Yes (Specify',d.propertyDetails,{occ:0,dx:8,maxWidth:190,size:6.2});
+  yesNoRow(['Any property in TR','gayrimenkul'],d.property,{maxDy:28});
+  if(d.property==='Yes')afterRowToken(['Any property in TR','gayrimenkul'],['Yes (Specify','Yes'],d.propertyDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  yesNoPair(1,d.travellingWith); if(d.travellingWith==='Yes')after('Yes (Specify',d.travellingDetails,{occ:1,dx:8,maxWidth:190,size:6.2});
-  yesNoPair(2,d.ksaRelatives); if(d.ksaRelatives==='Yes')after('Yes (Specify',d.ksaRelativesDetails,{occ:2,dx:8,maxWidth:190,size:6.2});
-  yesNoPair(3,d.turkishRelatives); if(d.turkishRelatives==='Yes')after('Yes (Specify',d.turkishRelativesDetails,{occ:3,dx:8,maxWidth:190,size:6.2});
-  yesNoPair(4,d.oldPassport); if(d.oldPassport==='Yes')after('Passport Number:',d.oldPassportNumber,{maxWidth:165,size:6.2});
+  yesNoRow(['Who are you travelling with','Kiminle seyahat'],d.travellingWith,{maxDy:28});
+  if(d.travellingWith==='Yes')afterRowToken(['Who are you travelling with','Kiminle seyahat'],['Yes (Specify','Yes'],d.travellingDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
+  yesNoRow(['Any Ksa Relatives','Suudi akrabası'],d.ksaRelatives,{maxDy:28});
+  if(d.ksaRelatives==='Yes')afterRowToken(['Any Ksa Relatives','Suudi akrabası'],['Yes (Specify','Yes'],d.ksaRelativesDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
+  yesNoRow(['Any Turkish Relatives','Türk akrabası'],d.turkishRelatives,{maxDy:28});
+  if(d.turkishRelatives==='Yes')afterRowToken(['Any Turkish Relatives','Türk akrabası'],['Yes (Specify','Yes'],d.turkishRelativesDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
+  yesNoRow(['Old Passport Details','eski pasaport'],d.oldPassport,{maxDy:28});
+  if(d.oldPassport==='Yes')afterRowToken(['Old Passport Details','eski pasaport'],['Passport Number:','Passport Number'],d.oldPassportNumber,{maxDy:28,dx:6,maxWidth:155,size:6.2});
 
   // Previous visa history table (up to 4 rows to preserve the official single-page layout)
   if(d.history&&d.history.length){
