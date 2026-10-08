@@ -137,7 +137,7 @@ function normalizePdfLabel(v){return String(v||'').replace(/[\uE000-\uF8FF]/g,''
 function fmtPdfDate(x){return fmtDate(x)}
 function makeTextTools(page,font,bold,width,height){
   function fit(txt,maxWidth,size=7,min=4.7,f=font){txt=cleanPdfText(txt);if(!txt)return {txt:'',size};let s=size;while(s>min&&f.widthOfTextAtSize(txt,s)>maxWidth)s-=.25;if(f.widthOfTextAtSize(txt,s)<=maxWidth)return {txt,size:s};let out=txt;while(out.length>2&&f.widthOfTextAtSize(out+'…',s)>maxWidth)out=out.slice(0,-1);return {txt:out+'…',size:s}}
-  function draw(x,y,txt,maxWidth=width-x-18,size=7,f=font){if(!txt)return;let q=fit(txt,Math.max(18,maxWidth),size,4.7,f);page.drawText(q.txt,{x,y,size:q.size,font:f,color:PDFLib.rgb(.08,.08,.1)})}
+  function draw(x,y,txt,maxWidth=width-x-18,size=7,f=font){if(!txt)return;size*=1.12;let q=fit(txt,Math.max(18,maxWidth),size,4.7,f);page.drawText(q.txt,{x,y,size:q.size,font:f,color:PDFLib.rgb(.08,.08,.1)})}
   function mark(x,y){
     const color=PDFLib.rgb(.08,.08,.1);
     page.drawLine({start:{x:x,y:y+1.1},end:{x:x+1.9,y:y-0.7},thickness:1.0,color});
@@ -248,6 +248,13 @@ async function generateFilledOfficialPdf(d){
     const re=new RegExp('^'+rowNum+'\\.');
     return items.filter(it=>re.test(it.n)).sort((a,b)=>a.yTop-b.yTop||a.x-b.x)[0]||null;
   }
+  function markRowBox(rowNum,x,yDelta=0,enabled=true){
+    if(!enabled)return;
+    const a=rowAnchor(rowNum);
+    if(!a)return;
+    mark(x,posY(a,-1)+yDelta);
+    placedAny=true;
+  }
   function rowBandItems(rowNum){
     const a=rowAnchor(rowNum); if(!a)return [];
     const next=rowAnchor(rowNum+1);
@@ -309,9 +316,9 @@ async function generateFilledOfficialPdf(d){
   }
 
   // 5 entry type
-  checkRowToken(5,'Single Entry',d.entryType==='Single Entry');
-  checkRowToken(5,'Multiple Entry',d.entryType==='Multiple Entry');
-  checkRowToken(5,'Double Entry',d.entryType==='Double Entry');
+  markRowBox(5,282.5,0,d.entryType==='Single Entry');
+  markRowBox(5,366.5,0,d.entryType==='Multiple Entry');
+  markRowBox(5,458.0,0,d.entryType==='Double Entry');
 
   // 6-9
   rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
@@ -321,41 +328,41 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  checkRowToken(10,['Single/Bekar','Single'],d.marital==='Single');
-  checkRowToken(10,['Married/EVLI','Married'],d.marital==='Married');
+  markRowBox(10,282.5,0,d.marital==='Single');
+  markRowBox(10,376.5,0,d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  checkRowToken(12,['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant');
-  checkRowToken(12,['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor');
-  if(d.expenses==='Sponsor')writeAfterRowToken(12,['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:8,maxWidth:180,size:6.1});
+  markRowBox(12,282.5,0,d.expenses==='Applicant');
+  markRowBox(12,282.5,-9.5,d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')writeAfterRowToken(12,['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:8,maxWidth:180,size:6.4});
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 18, 21-24 Yes/No groups, anchored inside each numbered row
-  checkRowToken(18,'No',d.property==='No');
-  checkRowToken(18,['Yes (Specify','Yes'],d.property==='Yes');
+  markRowBox(18,282.5,0,d.property==='No');
+  markRowBox(18,308.8,0,d.property==='Yes');
   if(d.property==='Yes')writeAfterRowToken(18,['Yes (Specify','Yes'],d.propertyDetails,{dx:18,maxWidth:180,size:6.1});
 
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
 
-  checkRowToken(21,'No',d.travellingWith==='No');
-  checkRowToken(21,['Yes (Specify','Yes'],d.travellingWith==='Yes');
+  markRowBox(21,282.5,0,d.travellingWith==='No');
+  markRowBox(21,308.8,0,d.travellingWith==='Yes');
   if(d.travellingWith==='Yes')writeAfterRowToken(21,['Yes (Specify','Yes'],d.travellingDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkRowToken(22,'No',d.ksaRelatives==='No');
-  checkRowToken(22,['Yes (Specify','Yes'],d.ksaRelatives==='Yes');
+  markRowBox(22,282.5,0,d.ksaRelatives==='No');
+  markRowBox(22,308.8,0,d.ksaRelatives==='Yes');
   if(d.ksaRelatives==='Yes')writeAfterRowToken(22,['Yes (Specify','Yes'],d.ksaRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkRowToken(23,'No',d.turkishRelatives==='No');
-  checkRowToken(23,['Yes (Specify','Yes'],d.turkishRelatives==='Yes');
+  markRowBox(23,282.5,0,d.turkishRelatives==='No');
+  markRowBox(23,308.8,0,d.turkishRelatives==='Yes');
   if(d.turkishRelatives==='Yes')writeAfterRowToken(23,['Yes (Specify','Yes'],d.turkishRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  checkRowToken(24,'No',d.oldPassport==='No');
-  checkRowToken(24,['Yes (Passport Number','Yes'],d.oldPassport==='Yes');
+  markRowBox(24,282.5,0,d.oldPassport==='No');
+  markRowBox(24,308.8,0,d.oldPassport==='Yes');
   if(d.oldPassport==='Yes')writeAfterRowToken(24,['Passport Number:','Yes (Passport Number','Yes'],d.oldPassportNumber,{dx:10,maxWidth:145,size:6.1});
 
   // Previous visa history table, anchored to the printed table headers.
