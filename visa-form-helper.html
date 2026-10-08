@@ -238,10 +238,20 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Address in KSA',d.ksaAddress,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer(['Mobile Number & Email Address','Mobile Number'],[d.mobile,d.email].filter(Boolean).join(' / '),{xFrac:.49,maxWidth:width*.43,size:6.4});
 
+  // Fixed official-form checkbox coordinates (May 2026 form).
+  // These are more reliable than PDF text-token matching because the checkbox labels
+  // are split differently by PDF.js on some browsers/devices.
+  const REF_W=595.28, REF_H=841.89;
+  const sx=width/REF_W, sy=height/REF_H;
+  function markFixed(x,y,enabled){if(!enabled)return;mark(x*sx,y*sy);placedAny=true}
+  function drawFixed(x,y,value,maxWidth=160,size=6.4,isBold=false){
+    if(!value)return;draw(x*sx,y*sy,value,maxWidth*sx,size,isBold?bold:font);placedAny=true
+  }
+
   // 5 entry type
-  checkbox('Single Entry',d.entryType==='Single Entry');
-  checkbox('Multiple Entry',d.entryType==='Multiple Entry');
-  checkbox('Double Entry',d.entryType==='Double Entry');
+  markFixed(279.5,696.5,d.entryType==='Single Entry');
+  markFixed(373.5,696.5,d.entryType==='Multiple Entry');
+  markFixed(477.5,696.5,d.entryType==='Double Entry');
 
   // 6-9
   rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
@@ -251,41 +261,56 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  markRowChoice(['Marital Status','Medeni Durumu'],['Single/Bekar','Single'],d.marital==='Single');
-  markRowChoice(['Marital Status','Medeni Durumu'],['Married/EVLI','Married'],d.marital==='Married');
+  markFixed(279.5,592.5,d.marital==='Single');
+  markFixed(386.0,592.5,d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  markRowChoice(['Who covers the expenses','Masrafları kim karşılıyor'],['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant',{maxDy:28});
-  markRowChoice(['Who covers the expenses','Masrafları kim karşılıyor'],['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor',{maxDy:28});
-  if(d.expenses==='Sponsor')afterRowToken(['Who covers the expenses','Masrafları kim karşılıyor'],['Sponsor (Name:','Sponsor'],d.sponsorName,{maxDy:28,dx:8,maxWidth:185,size:6.2});
+  markFixed(279.5,548.0,d.expenses==='Applicant');
+  markFixed(279.5,536.3,d.expenses==='Sponsor');
+  if(d.expenses==='Sponsor')drawFixed(359.0,536.0,d.sponsorName,185,6.2);
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
-  // 18, 21-24 Yes/No groups in page order
-  yesNoRow(['Any property in TR','gayrimenkul'],d.property,{maxDy:28});
-  if(d.property==='Yes')afterRowToken(['Any property in TR','gayrimenkul'],['Yes (Specify','Yes'],d.propertyDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
+  // 18, 21-24 fixed Yes/No groups
+  markFixed(279.5,402.5,d.property==='No');
+  markFixed(309.5,402.5,d.property==='Yes');
+  if(d.property==='Yes')drawFixed(390.0,401.8,d.propertyDetails,170,6.2);
+
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  yesNoRow(['Who are you travelling with','Kiminle seyahat'],d.travellingWith,{maxDy:28});
-  if(d.travellingWith==='Yes')afterRowToken(['Who are you travelling with','Kiminle seyahat'],['Yes (Specify','Yes'],d.travellingDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
-  yesNoRow(['Any Ksa Relatives','Suudi akrabası'],d.ksaRelatives,{maxDy:28});
-  if(d.ksaRelatives==='Yes')afterRowToken(['Any Ksa Relatives','Suudi akrabası'],['Yes (Specify','Yes'],d.ksaRelativesDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
-  yesNoRow(['Any Turkish Relatives','Türk akrabası'],d.turkishRelatives,{maxDy:28});
-  if(d.turkishRelatives==='Yes')afterRowToken(['Any Turkish Relatives','Türk akrabası'],['Yes (Specify','Yes'],d.turkishRelativesDetails,{maxDy:28,dx:18,maxWidth:180,size:6.2});
-  yesNoRow(['Old Passport Details','eski pasaport'],d.oldPassport,{maxDy:28});
-  if(d.oldPassport==='Yes')afterRowToken(['Old Passport Details','eski pasaport'],['Passport Number:','Passport Number'],d.oldPassportNumber,{maxDy:28,dx:6,maxWidth:155,size:6.2});
 
-  // Previous visa history table (up to 4 rows to preserve the official single-page layout)
+  markFixed(279.5,319.8,d.travellingWith==='No');
+  markFixed(309.5,319.8,d.travellingWith==='Yes');
+  if(d.travellingWith==='Yes')drawFixed(390.0,319.2,d.travellingDetails,170,6.2);
+
+  markFixed(279.5,295.0,d.ksaRelatives==='No');
+  markFixed(309.5,295.0,d.ksaRelatives==='Yes');
+  if(d.ksaRelatives==='Yes')drawFixed(390.0,294.4,d.ksaRelativesDetails,170,6.2);
+
+  markFixed(279.5,269.4,d.turkishRelatives==='No');
+  markFixed(309.5,269.4,d.turkishRelatives==='Yes');
+  if(d.turkishRelatives==='Yes')drawFixed(390.0,268.8,d.turkishRelativesDetails,170,6.2);
+
+  markFixed(279.5,249.6,d.oldPassport==='No');
+  markFixed(309.5,249.6,d.oldPassport==='Yes');
+  if(d.oldPassport==='Yes')drawFixed(420.0,249.0,d.oldPassportNumber,135,6.2);
+
+  // Previous visa history table - fixed cells in the official form.
+  // The form has three visible rows; extra rows stay in the helper draft but are not
+  // stamped into the one-page official form.
   if(d.history&&d.history.length){
-    let country=findAny('Country/Ülke'), duration=findAny('Duration/Süre'), from=findAny('From/..den'), to=findAny('To/..kadar'), city=findAny('City of Entry');
-    let header=country||duration||from||to||city;
-    if(header){
-      let baseY=posY(header,-12);
-      d.history.slice(0,4).forEach((r,i)=>{let y=baseY-i*10.5;if(country)draw(country.x,y,r.country,Math.max(65,(duration?duration.x:country.x+95)-country.x-5),5.7);if(duration)draw(duration.x,y,r.duration,Math.max(50,(from?from.x:duration.x+75)-duration.x-5),5.7);if(from)draw(from.x,y,fmtPdfDate(r.from),55,5.4);if(to)draw(to.x,y,fmtPdfDate(r.to),55,5.4);if(city)draw(city.x,y,r.city,width-city.x-16,5.7)});
-    }
+    const ys=[188.5,174.2,160.0];
+    d.history.slice(0,3).forEach((r,i)=>{
+      const y=ys[i];
+      drawFixed(10.0,y,r.country,198,5.7);
+      drawFixed(217.0,y,r.duration,78,5.7);
+      drawFixed(306.0,y,fmtPdfDate(r.from),80,5.4);
+      drawFixed(399.0,y,fmtPdfDate(r.to),80,5.4);
+      drawFixed(490.0,y,r.city,92,5.7);
+    });
   }
 
   // Applicant name above the signature/name label. Signature remains blank for manual signing.
