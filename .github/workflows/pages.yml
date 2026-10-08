@@ -19,15 +19,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp -R index.html istanbul.html istanbul-data.js visa.html visa-content.html visa-form-helper.html .nojekyll _site/
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq librsvg2-bin imagemagick fonts-dejavu-core >/dev/null
-          rsvg-convert -w 600 -h 315 og-home.svg -o /tmp/home.png
-          rsvg-convert -w 600 -h 315 og-istanbul.svg -o /tmp/istanbul.png
-          rsvg-convert -w 600 -h 315 og-visa.svg -o /tmp/visa.png
-          convert /tmp/home.png -strip -quality 88 _site/og-home.jpg
-          convert /tmp/istanbul.png -strip -quality 88 _site/og-istanbul.jpg
-          convert /tmp/visa.png -strip -quality 88 _site/og-visa.jpg
+          cp -R index.html istanbul.html istanbul-data.js visa.html visa-content.html visa-form-helper.html og-home-final.png og-istanbul-final.png og-visa-final.png .nojekyll _site/
       - uses: actions/configure-pages@v5
         with:
           enablement: true
