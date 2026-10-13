@@ -272,6 +272,15 @@ async function generateFilledOfficialPdf(d){
     candidates.sort((a,b)=>a.yTop-b.yTop||a.x-b.x);
     return candidates[opt.occ||0]||null;
   }
+  function stampChoice(rowNum,needles,enabled,opt={}){
+    if(!enabled)return;
+    const it=rowBandToken(rowNum,needles,{minX:opt.minX==null?width*.45:opt.minX,occ:opt.occ||0});
+    if(!it)return;
+    const x=it.x+(opt.dx==null?-8.6:opt.dx);
+    const y=posY(it,opt.dy==null?-1.0:opt.dy);
+    page.drawText('X',{x,y,size:8.2,font:bold,color:PDFLib.rgb(.05,.05,.05)});
+    placedAny=true;
+  }
   function checkRowToken(rowNum,needles,enabled,opt={}){
     if(!enabled)return;
     const rowItems=rowBandItems(rowNum);
@@ -316,9 +325,9 @@ async function generateFilledOfficialPdf(d){
   }
 
   // 5 entry type
-  markRowBox(5,282.5,0,d.entryType==='Single Entry');
-  markRowBox(5,366.5,0,d.entryType==='Multiple Entry');
-  markRowBox(5,458.0,0,d.entryType==='Double Entry');
+  stampChoice(5,'Single Entry',d.entryType==='Single Entry');
+  stampChoice(5,'Multiple Entry',d.entryType==='Multiple Entry');
+  stampChoice(5,'Double Entry',d.entryType==='Double Entry');
 
   // 6-9
   rowAnswer('Purpose of Visit',d.purpose,{xFrac:.49,maxWidth:width*.43,size:6.8});
@@ -328,41 +337,41 @@ async function generateFilledOfficialPdf(d){
   rowAnswer('Place of Birth',d.birthPlace,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 10 marital
-  markRowBox(10,282.5,0,d.marital==='Single');
-  markRowBox(10,376.5,0,d.marital==='Married');
+  stampChoice(10,['Single/Bekar','Single'],d.marital==='Single');
+  stampChoice(10,['Married/EVLI','Married'],d.marital==='Married');
 
   // 11-17
   rowAnswer(["saudi'de yaşıyor",'How long been in KSA'],d.ksaDuration,{xFrac:.49,maxWidth:width*.43,size:6.7});
-  markRowBox(12,282.5,0,d.expenses==='Applicant');
-  markRowBox(12,282.5,-9.5,d.expenses==='Sponsor');
+  stampChoice(12,['Applicant/Başvuru Sahibinin kendisi','Applicant'],d.expenses==='Applicant');
+  stampChoice(12,['Sponsor (Name:','Sponsor'],d.expenses==='Sponsor');
   if(d.expenses==='Sponsor')writeAfterRowToken(12,['Sponsor (Name:','Sponsor'],d.sponsorName,{dx:8,maxWidth:180,size:6.4});
   rowAnswer('Occupation',d.occupation,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('Company Name',d.company,{xFrac:.49,maxWidth:width*.43,size:6.8});
   rowAnswer('How long been working',d.workDuration,{xFrac:.49,maxWidth:width*.43,size:6.8});
 
   // 18, 21-24 Yes/No groups, anchored inside each numbered row
-  markRowBox(18,282.5,0,d.property==='No');
-  markRowBox(18,308.8,0,d.property==='Yes');
+  stampChoice(18,'No',d.property==='No');
+  stampChoice(18,['Yes (Specify','Yes'],d.property==='Yes');
   if(d.property==='Yes')writeAfterRowToken(18,['Yes (Specify','Yes'],d.propertyDetails,{dx:18,maxWidth:180,size:6.1});
 
   after('Date of Departure:',fmtPdfDate(d.departure),{maxWidth:105,size:6.6});
   after('Date of Arrival:',fmtPdfDate(d.arrival),{maxWidth:105,size:6.6});
   rowAnswer('Place of Stay in TR',d.stayPlace,{xFrac:.49,maxWidth:width*.43,size:6.7});
 
-  markRowBox(21,282.5,0,d.travellingWith==='No');
-  markRowBox(21,308.8,0,d.travellingWith==='Yes');
+  stampChoice(21,'No',d.travellingWith==='No');
+  stampChoice(21,['Yes (Specify','Yes'],d.travellingWith==='Yes');
   if(d.travellingWith==='Yes')writeAfterRowToken(21,['Yes (Specify','Yes'],d.travellingDetails,{dx:18,maxWidth:180,size:6.1});
 
-  markRowBox(22,282.5,0,d.ksaRelatives==='No');
-  markRowBox(22,308.8,0,d.ksaRelatives==='Yes');
+  stampChoice(22,'No',d.ksaRelatives==='No');
+  stampChoice(22,['Yes (Specify','Yes'],d.ksaRelatives==='Yes');
   if(d.ksaRelatives==='Yes')writeAfterRowToken(22,['Yes (Specify','Yes'],d.ksaRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  markRowBox(23,282.5,0,d.turkishRelatives==='No');
-  markRowBox(23,308.8,0,d.turkishRelatives==='Yes');
+  stampChoice(23,'No',d.turkishRelatives==='No');
+  stampChoice(23,['Yes (Specify','Yes'],d.turkishRelatives==='Yes');
   if(d.turkishRelatives==='Yes')writeAfterRowToken(23,['Yes (Specify','Yes'],d.turkishRelativesDetails,{dx:18,maxWidth:180,size:6.1});
 
-  markRowBox(24,282.5,0,d.oldPassport==='No');
-  markRowBox(24,308.8,0,d.oldPassport==='Yes');
+  stampChoice(24,'No',d.oldPassport==='No');
+  stampChoice(24,['Yes (Passport Number','Yes'],d.oldPassport==='Yes');
   if(d.oldPassport==='Yes')writeAfterRowToken(24,['Passport Number:','Yes (Passport Number','Yes'],d.oldPassportNumber,{dx:10,maxWidth:145,size:6.1});
 
   // Previous visa history table, anchored to the printed table headers.
