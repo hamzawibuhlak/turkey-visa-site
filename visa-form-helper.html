@@ -161,7 +161,7 @@ async function generateFilledOfficialPdf(d){
   const p=await pdfJsDoc.getPage(1);
   const viewport=p.getViewport({scale:1});
   const tc=await p.getTextContent();
-  const items=tc.items.filter(x=>x.str&&x.str.trim()).map((it,idx)=>{let m=pdfjsLib.Util.transform(viewport.transform,it.transform);return {idx,str:it.str,n:normalizePdfLabel(it.str),x:m[4],yTop:m[5],w:it.width||0,h:it.height||7}});
+  const items=tc.items.filter(x=>x.str&&x.str.trim()).map((it,idx)=>{let m=pdfjsLib.Util.transform(viewport.transform,it.transform);return {idx,str:it.str,n:normalizePdfLabel(it.str),x:m[4],yTop:m[5],w:it.width||0,h:it.height||7,fontName:it.fontName}});
   const {draw,mark}=makeTextTools(page,font,bold,width,height);
   let placedAny=false;
   function findAny(needles,occ=0){
@@ -272,13 +272,57 @@ async function generateFilledOfficialPdf(d){
     candidates.sort((a,b)=>a.yTop-b.yTop||a.x-b.x);
     return candidates[opt.occ||0]||null;
   }
+  // Anchor every tick to the checkbox glyph in the ORIGINAL official PDF.
+  // v13 used a fixed offset from the option label, which could place its X
+  // outside the square whenever PDF.js merged the glyph and the label.
+  const choiceCounts={5:3,10:2,12:2,18:2,21:2,22:2,23:2,24:2};
+  const choiceCalls=Object.create(null);
+  const choiceCache=Object.create(null);
+  const glyphPattern=/[\uF063\u2610\u25A1\u25FB\u25FD]/g;
+  const measureCtx=document.createElement('canvas').getContext('2d');
+
+  function rowChoiceBoxes(rowNum){
+    if(choiceCache[rowNum])return choiceCache[rowNum];
+    const boxes=[];
+    for(const it of rowBandItems(rowNum)){
+      const raw=String(it.str||'');
+      glyphPattern.lastIndex=0;
+      for(const m of raw.matchAll(glyphPattern)){
+        let glyphX=it.x;
+        let glyphWidth=Math.min(9,Math.max(6,it.h||7.5));
+        if(raw.length===1){
+          glyphWidth=Math.min(11,Math.max(5.5,it.w||glyphWidth));
+        }else if(measureCtx){
+          const family=(tc.styles[it.fontName]||{}).fontFamily||'Arial';
+          measureCtx.font=Math.max(6,it.h||8)+'px "'+family.replace(/"/g,'')+'"';
+          const total=measureCtx.measureText(raw).width;
+          if(total>0&&it.w>0){
+            glyphX+=it.w*measureCtx.measureText(raw.slice(0,m.index)).width/total;
+            glyphWidth=Math.min(11,Math.max(5.5,it.w*measureCtx.measureText(m[0]).width/total));
+          }
+        }
+        if(glyphX>=width*.37&&glyphX<width-12)boxes.push({x:glyphX,w:glyphWidth,yTop:it.yTop});
+      }
+    }
+    // Entry 5 can wrap to a second line; order is top-to-bottom then left-to-right.
+    boxes.sort((a,b)=>Math.abs(a.yTop-b.yTop)>2?a.yTop-b.yTop:a.x-b.x);
+    const unique=boxes.filter((b,i)=>!boxes.slice(0,i).some(q=>Math.abs(q.x-b.x)<2&&Math.abs(q.yTop-b.yTop)<2));
+    choiceCache[rowNum]=unique;
+    return unique;
+  }
+
   function stampChoice(rowNum,needles,enabled,opt={}){
+    const index=choiceCalls[rowNum]||0;
+    choiceCalls[rowNum]=index+1;
     if(!enabled)return;
-    const it=rowBandToken(rowNum,needles,{minX:opt.minX==null?width*.45:opt.minX,occ:opt.occ||0});
-    if(!it)return;
-    const x=it.x+(opt.dx==null?-8.6:opt.dx);
-    const y=posY(it,opt.dy==null?-1.0:opt.dy);
-    page.drawText('X',{x,y,size:8.2,font:bold,color:PDFLib.rgb(.05,.05,.05)});
+    const boxes=rowChoiceBoxes(rowNum);
+    if(boxes.length!==choiceCounts[rowNum]||!boxes[index]){
+      throw new Error((lang==='ar'?'تعذر تحديد مربعات الاختيار في البند ':'Could not locate the original checkboxes in field ')
+        +rowNum+' ('+boxes.length+'/'+choiceCounts[rowNum]+').');
+    }
+    const box=boxes[index];
+    // Draw a vector ✓ entirely on top of the original, unmodified PDF page.
+    mark(box.x+(box.w-5.2)/2,height-box.yTop+1.05);
     placedAny=true;
   }
   function checkRowToken(rowNum,needles,enabled,opt={}){
