@@ -245,8 +245,11 @@ async function generateFilledOfficialPdf(d){
   // Checkbox placement is anchored to the actual text in each numbered row.
   // This avoids hard-coded Y coordinates and keeps the original PDF unchanged.
   function rowAnchor(rowNum){
-    const re=new RegExp('^'+rowNum+'\\.');
-    return items.filter(it=>re.test(it.n)).sort((a,b)=>a.yTop-b.yTop||a.x-b.x)[0]||null;
+    // The official PDF often exposes "5" and ". Number of Entry" as
+    // separate PDF.js text items, not a single "5." token.
+    const n=String(rowNum);
+    return items.filter(it=>it.x<width*.25 && (it.n===n||it.n.startsWith(n+'.')||it.n.startsWith(n+' .')))
+      .sort((a,b)=>a.yTop-b.yTop||a.x-b.x)[0]||null;
   }
   function markRowBox(rowNum,x,yDelta=0,enabled=true){
     if(!enabled)return;
