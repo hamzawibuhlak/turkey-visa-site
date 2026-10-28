@@ -1,7 +1,7 @@
 // قالب عامل الخدمة. تملأ scripts/sw-builder.mjs القيم الثلاث عند البناء.
 // يخزّن ملفات التطبيق العامة من الأصل نفسه فقط: لا خرائط ولا صور خارجية ولا /auth/ ولا Drive.
-const CACHE = "turkey-v2-3535802d1f40";
-const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/Map-CIGW-MKW.css","./assets/Map-DpZ2GLtP.js","./assets/VisaForm-CgJH8YP0.js","./assets/index-QrqU2dz0.js","./assets/index-lt3Z9p9G.css"];
+const CACHE = "turkey-v2-0b8f6d23b955";
+const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/Map-CIGW-MKW.css","./assets/Map-DjQMxhc3.js","./assets/VisaForm-5a8EEq4L.js","./assets/index-BflJRaB3.js","./assets/index-lt3Z9p9G.css"];
 const EXTRA = ["./assets/baklava.webp","./assets/hamza-logo-clear.png","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/visa-official.pdf"];
 const NETWORK_FIRST = ["./config.json"];
 const OWNED = new Set([...CORE, ...EXTRA, ...NETWORK_FIRST]);
