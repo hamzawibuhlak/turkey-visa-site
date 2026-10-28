@@ -1,1 +1,79 @@
-const CACHE='turkey-v2-standalone-20261027';const FILES=["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/baklava.webp","./assets/hamza-head.png","./assets/hamza-logo-clear.png","./assets/hamza-logo.png","./assets/hamza.webp","./assets/index-BmB6wwHH.js","./assets/index-Cz4LanlX.css","./assets/istanbul-LXMw1GJp.webp","./assets/istanbul-sunrise-DCf3Futn.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/og-expense-settings.jpg","./assets/og-expenses.jpg","./assets/og-explore.jpg","./assets/og-home.jpg","./assets/og-reports.jpg","./assets/og-trips.jpg","./assets/og-visa.jpg","./assets/visa-official.pdf"];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('turkey-v2-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin)return;const root=new URL('./',self.location.href);const relative='./'+u.pathname.slice(root.pathname.length);if(!FILES.includes(relative))return;const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);e.respondWith(fetch(e.request,{signal:controller.signal}).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return r}).catch(()=>caches.match(e.request)).finally(()=>clearTimeout(timer)))});
+// قالب عامل الخدمة. تملأ scripts/sw-builder.mjs القيم الثلاث عند البناء.
+// يخزّن ملفات التطبيق العامة من الأصل نفسه فقط: لا خرائط ولا صور خارجية ولا /auth/ ولا Drive.
+const CACHE = "turkey-v2-3535802d1f40";
+const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/Map-CIGW-MKW.css","./assets/Map-DpZ2GLtP.js","./assets/VisaForm-CgJH8YP0.js","./assets/index-QrqU2dz0.js","./assets/index-lt3Z9p9G.css"];
+const EXTRA = ["./assets/baklava.webp","./assets/hamza-logo-clear.png","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/visa-official.pdf"];
+const NETWORK_FIRST = ["./config.json"];
+const OWNED = new Set([...CORE, ...EXTRA, ...NETWORK_FIRST]);
+const NETWORK_TIMEOUT_MS = 8000;
+
+const root = new URL("./", self.location.href);
+const relativePath = (url) => "./" + url.pathname.slice(root.pathname.length);
+
+// cache: "reload" يتجاوز ذاكرة المتصفح المؤقتة، فلا تدخل ملفات قديمة (مثل الأيقونات) إلى التخزين الجديد.
+const fresh = (file) => new Request(new URL(file, self.location.href), { cache: "reload" });
+
+self.addEventListener("install", (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.all(CORE.map((file) => cache.add(fresh(file))));
+    await Promise.allSettled(EXTRA.map((file) => cache.add(fresh(file))));
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) {
+      if (key.startsWith("turkey-v2-") && key !== CACHE) await caches.delete(key);
+    }
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin) return;
+  const path = relativePath(url);
+  if (!OWNED.has(path)) return;
+  event.respondWith(NETWORK_FIRST.includes(path) ? networkFirst(event) : cacheFirst(event));
+});
+
+// التخزين المسبق ثابت: أي نسخة جديدة تصل كاملة عبر تثبيت عامل خدمة جديد،
+// فلا تشير صفحة جديدة إلى ملف جافاسكربت لم يُخزَّن بعد.
+async function cacheFirst(event) {
+  const { request } = event;
+  const cache = await caches.open(CACHE);
+  const cached = await cache.match(request, { ignoreSearch: true });
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    if (response.ok) event.waitUntil(cache.put(request, response.clone()));
+    return response;
+  } catch (error) {
+    if (request.mode === "navigate") {
+      const shell = await cache.match("./index.html");
+      if (shell) return shell;
+    }
+    throw error;
+  }
+}
+
+async function networkFirst(event) {
+  const { request } = event;
+  const cache = await caches.open(CACHE);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), NETWORK_TIMEOUT_MS);
+  try {
+    const response = await fetch(request, { signal: controller.signal });
+    if (response.ok) event.waitUntil(cache.put(request, response.clone()));
+    return response;
+  } catch (error) {
+    const cached = await cache.match(request, { ignoreSearch: true });
+    if (cached) return cached;
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
