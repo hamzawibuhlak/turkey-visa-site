@@ -1,0 +1,8 @@
+# Note: crawlers only read robots.txt at the host root. On a GitHub Pages project
+# site (/turkey-visa-site/) this file takes effect only under a custom domain.
+# The meta robots noindex tag on preview-v2 pages is the signal that works today.
+User-agent: *
+Allow: /
+Disallow: /preview-v2/
+
+Sitemap: https://hamzawibuhlak.github.io/turkey-visa-site/sitemap.xml
