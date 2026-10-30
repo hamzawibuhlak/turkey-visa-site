@@ -1,8 +1,8 @@
 // قالب عامل الخدمة. تملأ scripts/sw-builder.mjs القيم الثلاث عند البناء.
 // يخزّن ملفات التطبيق العامة من الأصل نفسه فقط: لا خرائط ولا صور خارجية ولا /auth/ ولا Drive.
-const CACHE = "turkey-v2-7bfd6599f867";
-const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/Map-CIGW-MKW.css","./assets/Map-uEuJ5L0t.js","./assets/VisaForm-B5USKkWa.js","./assets/ferries-Brs3ybet.js","./assets/index-Bn4s9cbK.js","./assets/index-DVTIvgnx.css","./assets/theme-init.js"];
-const EXTRA = ["./assets/baklava.webp","./assets/hamza-logo-clear.png","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/visa-official.pdf"];
+const CACHE = "turkey-v2-2723565bcee1";
+const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/Map-CIGW-MKW.css","./assets/Map-DMrl-RT0.js","./assets/VisaForm-C1CDjQ22.js","./assets/ferries-Brs3ybet.js","./assets/index-CYNYS7Tt.css","./assets/index-xKUP5M4P.js","./assets/theme-init.js"];
+const EXTRA = ["./assets/baklava.webp","./assets/baloo-arabic.woff2","./assets/baloo-latin-ext.woff2","./assets/baloo-latin.woff2","./assets/hamza-logo-clear.png","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/marhey-arabic.woff2","./assets/marhey-latin-ext.woff2","./assets/marhey-latin.woff2","./assets/visa-official.pdf"];
 const NETWORK_FIRST = ["./config.json"];
 const OWNED = new Set([...CORE, ...EXTRA, ...NETWORK_FIRST]);
 const NETWORK_TIMEOUT_MS = 8000;

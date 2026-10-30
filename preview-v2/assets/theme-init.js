@@ -5,7 +5,7 @@
     var mode = localStorage.getItem('tg-theme');
     var dark =
       mode === 'dark' ||
-      (mode !== 'light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      (mode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     var theme = dark ? 'dark' : 'light';
     document.documentElement.dataset.theme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
