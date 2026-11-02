@@ -1,0 +1,603 @@
+/* هوية الموقع العام: نسخة من رموز التطبيق (app/src/design/tokens.css) بالمظهر الفاتح، والخطان مستضافان هنا.
+   يُحمَّل بعد نمط كل صفحة فيغلبه عند التساوي. أقل نص 12 وأقل هدف لمس 44، كما في التطبيق. */
+
+@font-face {
+  font-family: 'Marhey';
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('fonts/marhey-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+200C-200E, U+2010-2011, U+FB50-FDFF, U+FE70-FEFC;
+}
+@font-face {
+  font-family: 'Marhey';
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('fonts/marhey-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'Baloo Bhaijaan 2';
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('fonts/baloo-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+200C-200E, U+2010-2011, U+FB50-FDFF, U+FE70-FEFC;
+}
+@font-face {
+  font-family: 'Baloo Bhaijaan 2';
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('fonts/baloo-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'Baloo Bhaijaan 2';
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('fonts/baloo-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-0130, U+0132-02BA;
+}
+
+:root {
+  --ds-font-display: 'Marhey', 'Baloo Bhaijaan 2', 'Noto Sans Arabic', sans-serif;
+  --ds-font-text: 'Baloo Bhaijaan 2', 'Noto Sans Arabic', sans-serif;
+  --ds-text-xs: 12px;
+  --ds-text-sm: 13px;
+  --ds-text-md: 15px;
+  --ds-text-lg: 17px;
+  --ds-text-xl: 20px;
+  --ds-text-2xl: 24px;
+  --ds-text-3xl: 32px;
+  --ds-text-display: 44px;
+  --ds-leading-display: 1.3;
+  --ds-leading-body: 1.6;
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 20px;
+  --ds-space-6: 24px;
+  --ds-space-8: 32px;
+  --ds-space-10: 40px;
+  --ds-touch: 44px;
+  --ds-control: 48px;
+  --ds-radius-sm: 10px;
+  --ds-radius-md: 14px;
+  --ds-radius-lg: 18px;
+  --ds-radius-xl: 26px;
+  --ds-radius-pill: 999px;
+  --ds-dur: 200ms;
+  --ds-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --ds-bg: #f4efe7;
+  --ds-surface: #ffffff;
+  --ds-surface-2: #ede6da;
+  --ds-ink: #14213b;
+  --ds-muted: #586377;
+  --ds-line: #e3dacb;
+  --ds-border-strong: #6b7385;
+  --ds-brand: #d71d37;
+  --ds-brand-ink: #ffffff;
+  --ds-brand-text: #c2152f;
+  --ds-brand-soft: #fbe3e7;
+  --ds-accent: #0b7a75;
+  --ds-accent-text: #086864;
+  --ds-accent-soft: #d6eded;
+  --ds-success-text: #1b6f45;
+  --ds-warning-text: #7a5200;
+  --ds-warning-soft: #fbefd2;
+  --ds-focus: #1b5fd6;
+  --ds-scrim: rgba(20, 33, 59, 0.45);
+  --ds-shadow-sm: 0 1px 3px rgba(20, 33, 59, 0.08), 0 4px 12px rgba(20, 33, 59, 0.06);
+  --ds-shadow-md: 0 6px 18px rgba(20, 33, 59, 0.1), 0 1px 3px rgba(20, 33, 59, 0.08);
+  color-scheme: light;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-dur: 1ms;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== الأساس ===== */
+html body {
+  background: var(--ds-bg);
+  color: var(--ds-ink);
+  font-family: var(--ds-font-text);
+  line-height: var(--ds-leading-body);
+}
+html body :is(h1, h2, h3) {
+  font-family: var(--ds-font-display);
+  font-weight: 600;
+  line-height: var(--ds-leading-display);
+  letter-spacing: 0;
+}
+html body :is(button, input, select, textarea) {
+  font-family: var(--ds-font-text);
+}
+html body :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 2px;
+}
+/* حقول الجوال 16 كي لا يكبّر سفاري الصفحة عند لمسها. */
+@media (max-width: 720px) {
+  html body :is(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+    font-size: 16px;
+  }
+}
+
+/* ===== شريط الموقع ===== */
+.site-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+  width: min(960px, 100% - 32px);
+  margin-inline: auto;
+  padding-block: calc(var(--ds-space-3) + env(safe-area-inset-top, 0px)) var(--ds-space-3);
+}
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  min-block-size: var(--ds-touch);
+  color: var(--ds-ink);
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-lg);
+  font-weight: 600;
+  text-decoration: none;
+}
+.site-brand img {
+  inline-size: 40px;
+  block-size: 40px;
+}
+.site-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-1);
+  min-block-size: var(--ds-touch);
+  padding-inline: var(--ds-space-4);
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  color: var(--ds-ink);
+  font-size: var(--ds-text-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ===== الرئيسية ===== */
+.home {
+  display: grid;
+  gap: var(--ds-space-8);
+  width: min(960px, 100% - 32px);
+  margin-inline: auto;
+  padding-block: var(--ds-space-2) var(--ds-space-10);
+}
+.home-hero {
+  display: grid;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-8) var(--ds-space-6);
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-brand);
+  color: var(--ds-brand-ink);
+}
+.home-hero h1 {
+  max-inline-size: 16em;
+  margin: 0;
+  font-size: clamp(var(--ds-text-3xl), 7vw, var(--ds-text-display));
+}
+.home-hero p {
+  max-inline-size: 38em;
+  margin: 0;
+  font-size: var(--ds-text-lg);
+}
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+}
+.home-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--ds-control);
+  padding-inline: var(--ds-space-5);
+  border: 2px solid var(--ds-brand-ink);
+  border-radius: var(--ds-radius-pill);
+  color: var(--ds-brand-ink);
+  font-size: var(--ds-text-md);
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-action.is-main {
+  background: var(--ds-brand-ink);
+  color: var(--ds-brand-text);
+}
+.home-section {
+  display: grid;
+  gap: var(--ds-space-4);
+}
+.home-section > h2 {
+  margin: 0;
+  font-size: var(--ds-text-2xl);
+}
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ds-space-3);
+}
+.home-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-5);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  color: var(--ds-ink);
+  text-decoration: none;
+  transition: transform var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+}
+.home-card:hover {
+  box-shadow: var(--ds-shadow-md);
+  transform: translateY(-2px);
+}
+.home-card svg {
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--ds-brand-text);
+}
+.home-card h3 {
+  margin: 0;
+  font-size: var(--ds-text-xl);
+}
+.home-card p {
+  margin: 0;
+  color: var(--ds-muted);
+  font-size: var(--ds-text-md);
+}
+.home-card span {
+  color: var(--ds-brand-text);
+  font-size: var(--ds-text-sm);
+  font-weight: 700;
+}
+.home-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--ds-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-values strong {
+  display: block;
+  font-size: var(--ds-text-md);
+}
+.home-values span {
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+.site-foot {
+  padding-block-start: var(--ds-space-4);
+  border-block-start: 1px solid var(--ds-line);
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+
+/* ===== ما يتكرر في الصفحات القديمة: أبطال بلا تدرج ولا دوائر زخرفية ===== */
+html body .hero {
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-brand);
+  box-shadow: none;
+}
+html body .hero::before,
+html body .hero::after {
+  display: none;
+}
+html body .hero p {
+  color: var(--ds-brand-ink);
+  font-size: var(--ds-text-md);
+}
+
+/* ===== غلاف التأشيرة (visa.html) ===== */
+html body .bar {
+  background: var(--ds-surface);
+  border-block-end: 1px solid var(--ds-line);
+  box-shadow: none;
+}
+html body .back {
+  min-block-size: var(--ds-touch);
+  border: 0;
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-surface-2);
+  color: var(--ds-ink);
+  font-size: var(--ds-text-sm);
+}
+html body .brand .dot {
+  display: none;
+}
+
+/* ===== قائمة التأشيرة (visa-content.html) ===== */
+body[data-page='visa'] .fixed-dock {
+  background: var(--ds-bg);
+  padding-block-end: var(--ds-space-2);
+}
+body[data-page='visa'] .author-link {
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  min-block-size: var(--ds-touch);
+  border: 0;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body[data-page='visa'] .author-copy {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--ds-space-2);
+}
+body[data-page='visa'] .author-overline {
+  display: none;
+}
+body[data-page='visa'] .author-name {
+  color: var(--ds-ink);
+  font-size: var(--ds-text-md);
+}
+body[data-page='visa'] .progress-card {
+  border: 0;
+  border-radius: var(--ds-radius-md);
+  box-shadow: var(--ds-shadow-sm);
+}
+body[data-page='visa'] .reset {
+  inline-size: var(--ds-touch);
+  block-size: var(--ds-touch);
+  background: var(--ds-brand-soft);
+  color: var(--ds-brand-text);
+}
+body[data-page='visa'] :is(.item, .optional, .conditional, .notes) {
+  border: 0;
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+}
+body[data-page='visa'] .optional .item,
+body[data-page='visa'] .conditional .item {
+  background: var(--ds-bg);
+  box-shadow: none;
+}
+body[data-page='visa'] .check {
+  inline-size: 28px;
+  block-size: 28px;
+  border-color: var(--ds-border-strong);
+}
+body[data-page='visa'] .item-title {
+  font-family: var(--ds-font-text);
+  letter-spacing: 0;
+}
+body[data-page='visa'] :is(.section-doc-btn, .conditional-summary, .notes summary) {
+  min-block-size: var(--ds-touch);
+}
+
+/* ===== دليل إسطنبول (istanbul.html) ===== */
+body[data-page='istanbul'] .topbar {
+  background: var(--ds-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body[data-page='istanbul'] :is(.home-btn, .top-action, .view-tab, .search, .sort, .small-btn, .btn) {
+  min-block-size: var(--ds-touch);
+  border: 0;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  color: var(--ds-ink);
+  font-size: var(--ds-text-sm);
+}
+body[data-page='istanbul'] :is(.search, .sort) {
+  block-size: var(--ds-control);
+  border: 1.5px solid var(--ds-border-strong);
+  box-shadow: none;
+}
+body[data-page='istanbul'] .search::placeholder {
+  color: var(--ds-muted);
+}
+body[data-page='istanbul'] :is(.view-tab.active, .btn.primary, .plan-btn.on) {
+  background: var(--ds-brand);
+  color: var(--ds-brand-ink);
+}
+body[data-page='istanbul'] .cat {
+  min-block-size: var(--ds-touch);
+  padding-inline: var(--ds-space-4);
+  border: 0;
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  color: var(--ds-ink);
+  font-size: var(--ds-text-sm);
+}
+body[data-page='istanbul'] .cat.active {
+  background: var(--ds-ink);
+  color: var(--ds-surface);
+}
+body[data-page='istanbul'] :is(.place, .plan-row, .empty) {
+  border: 0;
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+}
+body[data-page='istanbul'] .place-title {
+  font-family: var(--ds-font-text);
+  font-size: var(--ds-text-lg);
+  letter-spacing: 0;
+}
+body[data-page='istanbul'] .curator-note {
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+body[data-page='istanbul'] .note-label {
+  color: var(--ds-brand-text);
+}
+body[data-page='istanbul'] .fact {
+  background: var(--ds-surface-2);
+  color: var(--ds-ink);
+}
+body[data-page='istanbul'] :is(.fav-btn, .plan-btn) {
+  inline-size: var(--ds-touch);
+  block-size: var(--ds-touch);
+}
+body[data-page='istanbul'] .plan-btn {
+  left: 60px;
+}
+body[data-page='istanbul'] :is(.day-select, .route-btn) {
+  min-block-size: var(--ds-touch);
+}
+body[data-page='istanbul'] .close {
+  inline-size: var(--ds-touch);
+  block-size: var(--ds-touch);
+}
+body[data-page='istanbul'] .modal {
+  border-radius: var(--ds-radius-xl);
+}
+body[data-page='istanbul'] .modal-note {
+  background: var(--ds-brand-soft);
+  color: var(--ds-ink);
+}
+body[data-page='istanbul'] .disclaimer {
+  background: var(--ds-warning-soft);
+  color: var(--ds-warning-text);
+}
+body[data-page='istanbul'] .photo-more {
+  background: var(--ds-brand);
+}
+body[data-page='istanbul'] .mobile-nav {
+  border: 0;
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-md);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body[data-page='istanbul'] .mobile-nav button {
+  color: var(--ds-ink);
+  font-size: var(--ds-text-sm);
+}
+body[data-page='istanbul'] .mobile-nav button.active {
+  background: var(--ds-brand);
+  color: var(--ds-brand-ink);
+}
+body[data-page='istanbul'] .footer {
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+
+/* ===== مساعد النموذج (visa-form-helper.html) ===== */
+body[data-page='form'] .topbar {
+  border: 0;
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+}
+body[data-page='form'] .brand-mark {
+  display: none;
+}
+body[data-page='form'] .section {
+  border: 0;
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-sm);
+}
+body[data-page='form'] .field :is(input, select, textarea) {
+  min-block-size: var(--ds-control);
+  border: 1.5px solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-md);
+}
+body[data-page='form'] .lang button {
+  min-block-size: var(--ds-touch);
+  min-inline-size: var(--ds-touch);
+}
+body[data-page='form'] .num {
+  background: var(--ds-brand-soft);
+  color: var(--ds-brand-text);
+}
+
+/* ===== عرض الرحلة المشتركة (trip.html) ===== */
+.trip {
+  display: grid;
+  gap: var(--ds-space-4);
+  width: min(720px, 100% - 32px);
+  margin-inline: auto;
+  padding-block: var(--ds-space-2) var(--ds-space-10);
+}
+.trip-head {
+  display: grid;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-6) var(--ds-space-5);
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-brand);
+  color: var(--ds-brand-ink);
+}
+.trip-head h1 {
+  margin: 0;
+  font-size: var(--ds-text-3xl);
+}
+.trip-head p {
+  margin: 0;
+  font-size: var(--ds-text-md);
+}
+.trip-day {
+  display: grid;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+}
+.trip-day h2 {
+  margin: 0;
+  font-size: var(--ds-text-xl);
+}
+.trip-day ol {
+  display: grid;
+  gap: var(--ds-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.trip-stage {
+  display: grid;
+  grid-template-columns: 3.4em minmax(0, 1fr);
+  gap: var(--ds-space-3);
+}
+.trip-stage time {
+  color: var(--ds-brand-text);
+  font-weight: 700;
+}
+.trip-stage strong {
+  display: block;
+  font-size: var(--ds-text-md);
+}
+.trip-stage small {
+  display: block;
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+.trip-stage a {
+  color: var(--ds-brand-text);
+  font-size: var(--ds-text-sm);
+  font-weight: 700;
+}
+.trip-empty,
+.trip-note {
+  margin: 0;
+  color: var(--ds-muted);
+  font-size: var(--ds-text-sm);
+}
+
+/* أهداف لمس باقية من الصفحات القديمة */
+html body :is(.print, .add-row) {
+  min-block-size: var(--ds-touch);
+}
+body[data-page='form'] .field input {
+  min-block-size: var(--ds-control);
+}

@@ -4,5 +4,6 @@
 User-agent: *
 Allow: /
 Disallow: /preview-v2/
+Disallow: /trip.html
 
 Sitemap: https://hamzawibuhlak.github.io/turkey-visa-site/sitemap.xml
