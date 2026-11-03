@@ -1,9 +1,12 @@
 // قالب عامل الخدمة. تملأ scripts/sw-builder.mjs القيم الثلاث عند البناء.
 // يخزّن ملفات التطبيق العامة من الأصل نفسه فقط: لا خرائط ولا صور خارجية ولا /auth/ ولا Drive.
-const CACHE = "turkey-v2-8da2c6481e6c";
-const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/AppModal-BZV-CM0Y.js","./assets/ArrowSquareOut.es-Bx5rvIcP.js","./assets/ArrowUp.es-D-SUOtI2.js","./assets/Bed.es-CUobeyeA.js","./assets/Camera.es-C4x2rgz-.js","./assets/ConfirmAction-DoF1efFc.js","./assets/Copy.es-DjqPbles.js","./assets/DownloadSimple.es-Cv2Jr0Wg.js","./assets/Expenses-JnmNXhta.js","./assets/Explore-COOWP00o.js","./assets/Map-CIGW-MKW.css","./assets/Map-Dh-m66kz.js","./assets/MapTrifold.es-BApA2Awp.js","./assets/PushPin.es-8K71vSCr.js","./assets/ReportsPage-D0dBwZPE.js","./assets/SettingsPage-Dd7CBqwp.js","./assets/Transit-CdN7ry8M.js","./assets/Transit-DENr6gY6.css","./assets/Translation-BgTsiFTq.css","./assets/Translation-yU2pnhZh.js","./assets/TripsPage-RMLZwl9q.js","./assets/VisaForm-D1d-RdPl.js","./assets/VisaPage-sA0gDr8P.js","./assets/boot.css","./assets/ferries-Brs3ybet.js","./assets/ferries-Gu52Ih46.js","./assets/index-BocPdqih.css","./assets/index-CY3gRPmC.js","./assets/lazy-parts-BebJoAKz.js","./assets/split-Cw0H2P12.js","./assets/theme-init.js"];
-const EXTRA = ["./assets/baklava.webp","./assets/baloo-arabic.woff2","./assets/baloo-latin-ext.woff2","./assets/baloo-latin.woff2","./assets/hamza-logo-clear.png","./assets/hamza-logo-header.webp","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-48.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/marhey-arabic.woff2","./assets/marhey-latin-ext.woff2","./assets/marhey-latin.woff2","./assets/visa-official.pdf"];
+const CACHE = "turkey-v2-a9ddf6cda98b";
+const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/AppModal-DdAAdLR3.js","./assets/ArrowSquareOut.es-DXCCtSZ8.js","./assets/ArrowUp.es-Draeruev.js","./assets/Bed.es-CLvlZEoB.js","./assets/Camera.es-BRDF8lPA.js","./assets/ConfirmAction-Bbgf5Tc-.js","./assets/Copy.es-D0Sma7iQ.js","./assets/DownloadSimple.es-C1l2RNv0.js","./assets/Expenses-DFm_-3SZ.js","./assets/Explore-DNiBQM0d.js","./assets/Map-BrPK4eyb.js","./assets/Map-CIGW-MKW.css","./assets/MapTrifold.es-DW3Z3L5F.js","./assets/PushPin.es-DJlNikGE.js","./assets/ReportsPage-GmMR2I6q.js","./assets/SettingsPage-IR5kxldy.js","./assets/Transit-Cx9B7jMd.js","./assets/Transit-DENr6gY6.css","./assets/Translation-BdfElzy7.css","./assets/Translation-vdLPpS_A.js","./assets/TripsPage-Cc80tJvP.js","./assets/VisaForm-DM2ipMG5.js","./assets/VisaPage-BtiRmqTt.js","./assets/boot.css","./assets/ferries-B60X3T98.js","./assets/ferries-Brs3ybet.js","./assets/index-B7tYSVSl.js","./assets/index-BocPdqih.css","./assets/index-C6xHUsg2.js","./assets/lazy-parts-CLQCONJk.js","./assets/split-Cw0H2P12.js","./assets/theme-init.js"];
+const EXTRA = ["./assets/baklava.webp","./assets/baloo-arabic.woff2","./assets/baloo-latin-ext.woff2","./assets/baloo-latin.woff2","./assets/hamza-logo-clear.png","./assets/hamza-logo-header.webp","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-48.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/icon-monochrome-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/marhey-arabic.woff2","./assets/marhey-latin-ext.woff2","./assets/marhey-latin.woff2","./assets/visa-official.pdf"];
 const NETWORK_FIRST = ["./config.json"];
+// قراءة الصور (ت١١): ملفاتها تُحفظ عند أول استعمال لا عند التثبيت، في ذاكرة باسم نسخة المكتبة تبقى بين الإصدارات.
+const OCR_CACHE = "turkey-ocr-7.0.0";
+const OCR_FILE = /^\.\/assets\/(ocr-worker\.|tesseract-core-|tur\.traineddata)/;
 const OWNED = new Set([...CORE, ...EXTRA, ...NETWORK_FIRST]);
 const NETWORK_TIMEOUT_MS = 8000;
 
@@ -56,6 +59,7 @@ self.addEventListener('activate', (event) => {
       const keep = (key) => key === CACHE || !saved || key === previous;
       for (const key of await caches.keys()) {
         if (key.startsWith('turkey-v2-') && !keep(key)) await caches.delete(key);
+        if (key.startsWith('turkey-ocr-') && key !== OCR_CACHE) await caches.delete(key);
       }
       await meta.put(META_KEY, new Response(JSON.stringify({ current: CACHE, previous })));
       await self.clients.claim();
@@ -68,12 +72,26 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
   const path = relativePath(url);
+  if (OCR_FILE.test(path)) {
+    event.respondWith(fromOcrCache(request));
+    return;
+  }
   if (!OWNED.has(path)) {
     if (path.startsWith('./assets/')) event.respondWith(fromAnyRelease(request));
     return;
   }
   event.respondWith(NETWORK_FIRST.includes(path) ? networkFirst(event) : cacheFirst(event));
 });
+
+// تُنزَّل مرة واحدة ثم تعمل دون إنترنت؛ الفشل يصل إلى الصفحة فتقول إن أول قراءة تحتاج اتصالًا.
+async function fromOcrCache(request) {
+  const cache = await caches.open(OCR_CACHE);
+  const cached = await cache.match(request, { ignoreSearch: true });
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok) await cache.put(request, response.clone());
+  return response;
+}
 
 // An asset this release does not own may belong to the previous release a page still runs.
 // It is served from whichever cache has it, otherwise from the network, and never stored.
