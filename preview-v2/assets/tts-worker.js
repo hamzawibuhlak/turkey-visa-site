@@ -1,9 +1,10 @@
-/* global ort, createPiperPhonemize, importScripts */
+/* global ort, createPiperPhonemize, importScripts, ArabicVoice */
 // عامل النطق داخل الجهاز (بايبر): نص ← رموز أصوات (eSpeak) ← شبكة عصبية (onnxruntime) ← WAV.
+// العربية تُشكَّل أولًا (libtashkeel)، ولها صوتان: «كريم» من بايبر، و«نبرة» (Kokoro، 24 كيلوهرتز) إن نُزّل.
 // عامل كلاسيكي يُنسخ كما هو عند البناء (scripts/copy-tts.mjs)؛ الملفات تُخدم بلا سياسة أمان للصفحة،
 // فيُسمح فيه بتشغيل WebAssembly. الأصوات من ‎/voices/‎ في البوابة، وعامل الخدمة يخزّنها بعد أول تنزيل.
 const BASE = new URL('./', self.location.href).href;
-importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js');
+importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js', BASE + 'tts-arabic.js');
 ort.env.wasm.numThreads = 1;
 ort.env.wasm.wasmPaths = BASE;
 
@@ -40,10 +41,11 @@ async function voice(language, report) {
   return loaded[language];
 }
 
-function phonemeIds(text, espeakVoice) {
+// رموز eSpeak للنص: phoneme_ids لبايبر، وphonemes (IPA) لـ«نبرة».
+function phonemize(text, espeakVoice) {
   return new Promise((resolve, reject) => {
     createPiperPhonemize({
-      print: (line) => resolve(JSON.parse(line).phoneme_ids),
+      print: (line) => resolve(JSON.parse(line)),
       printErr: (message) => reject(new Error(message)),
       locateFile: (file) => BASE + file,
     })
@@ -76,9 +78,68 @@ function wav(samples, rate) {
   return buffer;
 }
 
-async function speak({ text, language, rate }, report) {
+// التشكيل: نموذج صغير (نحو ٥ ميغابايت) يُحمَّل عند أول نطق عربي. أي فشل يعيد النص كما هو فلا يتوقف النطق.
+let tashkeel = null;
+async function diacritize(text) {
+  try {
+    tashkeel ??= ort.InferenceSession.create(await fetchModel(voiceUrl('libtashkeel', '.onnx'), () => {}), { executionProviders: ['wasm'] });
+    const session = await tashkeel;
+    const { charIds, hintIds } = ArabicVoice.prepareTashkeel(text);
+    if (!charIds.length) return text;
+    const tensor = (values) => new ort.Tensor('int64', BigInt64Array.from(values.map(BigInt)), [1, values.length]);
+    const { predictions } = await session.run({
+      char_inputs: tensor(charIds),
+      diac_inputs: tensor(hintIds),
+      input_lengths: new ort.Tensor('int64', BigInt64Array.from([BigInt(charIds.length)]), [1]),
+    });
+    return ArabicVoice.applyTashkeel(text, predictions.data);
+  } catch {
+    tashkeel = null;
+    return text;
+  }
+}
+
+// «نبرة»: النموذج (83 ميغابايت، int8) ومتجهات الأسلوب من ‎/voices/‎، والصوت بقطع لا تتجاوز حد النموذج.
+const NABRA_RATE = 24000;
+const NABRA_GAP = Math.round(NABRA_RATE * 0.15);
+let nabra = null;
+async function nabraVoice(report) {
+  nabra ??= (async () => {
+    const model = await fetchModel(voiceUrl('nabra-82m.int8', '.onnx'), report);
+    const voices = new Float32Array(await (await fetch(voiceUrl('nabra-voices', '.bin'))).arrayBuffer());
+    const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
+    return { session, voices };
+  })().catch((e) => {
+    nabra = null;
+    throw e;
+  });
+  return nabra;
+}
+
+async function speakNabra(text, rate, report) {
+  const { session, voices } = await nabraVoice(report);
+  const { phonemes = [] } = await phonemize(text, 'ar');
+  const parts = [];
+  for (const chunk of ArabicVoice.nabraChunks(phonemes.join(''))) {
+    const { ids, style } = ArabicVoice.nabraInput(chunk, voices);
+    const { audio } = await session.run({
+      input_ids: new ort.Tensor('int64', BigInt64Array.from(ids.map(BigInt)), [1, ids.length]),
+      ref_s: new ort.Tensor('float32', Float32Array.from(style), [1, style.length]),
+      speed: new ort.Tensor('float32', Float32Array.from([rate || 1]), [1]),
+    });
+    if (parts.length) parts.push(new Float32Array(NABRA_GAP));
+    parts.push(audio.data);
+  }
+  const samples = new Float32Array(parts.reduce((n, p) => n + p.length, 0));
+  parts.reduce((offset, p) => (samples.set(p, offset), offset + p.length), 0);
+  return wav(samples, NABRA_RATE);
+}
+
+async function speak({ text, language, rate, voice: choice }, report) {
+  const spoken = language === 'ar' ? await diacritize(text.trim()) : text.trim();
+  if (language === 'ar' && choice === 'nabra') return speakNabra(spoken, rate, report);
   const { config, session } = await voice(language, report);
-  const ids = await phonemeIds(text.trim(), config.espeak.voice);
+  const ids = (await phonemize(spoken, config.espeak.voice)).phoneme_ids;
   const { noise_scale: noise, length_scale: length, noise_w: noiseW } = config.inference;
   const feeds = {
     input: new ort.Tensor('int64', BigInt64Array.from(ids.map(BigInt)), [1, ids.length]),
@@ -95,7 +156,7 @@ self.onmessage = async ({ data }) => {
   const report = (progress) => self.postMessage({ id, type: 'progress', progress });
   try {
     if (type === 'prepare') {
-      await voice(data.language, report);
+      await (data.voice === 'nabra' ? nabraVoice(report) : voice(data.language, report));
       self.postMessage({ id, type: 'done' });
       return;
     }
