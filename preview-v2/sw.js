@@ -1,12 +1,18 @@
 // قالب عامل الخدمة. تملأ scripts/sw-builder.mjs القيم الثلاث عند البناء.
 // يخزّن ملفات التطبيق العامة من الأصل نفسه فقط: لا خرائط ولا صور خارجية ولا /auth/ ولا Drive.
-const CACHE = "turkey-v2-4ff8cc66bc20";
-const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/AppModal-BbUeRx67.js","./assets/ArrowSquareOut.es-BZDxEtY3.js","./assets/ArrowUp.es-hx_ufq42.js","./assets/Bed.es-psKwKJrS.js","./assets/Camera.es-DCUuX86e.js","./assets/ConfirmAction-Dp7RoZSg.js","./assets/Copy.es-DJrF5pqd.js","./assets/DownloadSimple.es-BgELjBcr.js","./assets/Expenses-Du4xSjvb.js","./assets/Explore-C6pUtE0j.js","./assets/Map-CCbDdpmx.js","./assets/Map-CIGW-MKW.css","./assets/MapTrifold.es-CDT2tqw3.js","./assets/PushPin.es-Bg1PBMiu.js","./assets/ReportsPage-DUNLsAep.js","./assets/SettingsPage-BCpK2wmf.js","./assets/Transit-DENr6gY6.css","./assets/Transit-jJTalEcB.js","./assets/Translation-CZuoM4Uo.css","./assets/Translation-DkI87eC4.js","./assets/TripsPage-Bhw3zQBA.js","./assets/VisaForm-BLVPQcpf.js","./assets/VisaPage-DAOzmOjB.js","./assets/boot.css","./assets/ferries-BVk7Vtdt.js","./assets/ferries-Brs3ybet.js","./assets/index-C6xHUsg2.js","./assets/index-CBII_tbi.css","./assets/index-DAKKEC78.js","./assets/lazy-parts-DT5EcYHI.js","./assets/split-Cw0H2P12.js","./assets/theme-init.js"];
+const CACHE = "turkey-v2-03916b83e093";
+const CORE = ["./","./index.html","./explore.html","./trips.html","./expenses.html","./reports.html","./expense-settings.html","./visa.html","./translate.html","./settings.html","./assets/AppModal-DJl5swj5.js","./assets/ArrowSquareOut.es-e1aQGbU6.js","./assets/ArrowUp.es-Crdi5dUq.js","./assets/Bed.es-B7NOsbb2.js","./assets/Camera.es-BBIpvzq0.js","./assets/ConfirmAction-CSfhsyC4.js","./assets/Copy.es-B7XmM6Q6.js","./assets/DownloadSimple.es-Cy0TPLpU.js","./assets/Expenses-BWt8J5YL.js","./assets/Explore-OtRDCn-C.js","./assets/Map-CIGW-MKW.css","./assets/Map-CuQJSGd0.js","./assets/MapTrifold.es-BaXW7RC3.js","./assets/PushPin.es-BoRS9gjM.js","./assets/ReportsPage-ChYDR5Zn.js","./assets/SettingsPage-Bftp10M9.css","./assets/SettingsPage-CKvquoRD.js","./assets/Transit-CDoOdf-u.js","./assets/Transit-DENr6gY6.css","./assets/Translation-CZuoM4Uo.css","./assets/Translation-DE0AGc3D.js","./assets/TripsPage-Du4ppWIw.js","./assets/VisaForm-CWQJ2s8v.js","./assets/VisaPage-x60MMBiv.js","./assets/boot.css","./assets/ferries-BLZn3Tgv.js","./assets/ferries-Brs3ybet.js","./assets/index-C6xHUsg2.js","./assets/index-CBII_tbi.css","./assets/index-ZfDkBGEx.js","./assets/lazy-parts-DJd5nvTF.js","./assets/split-Cw0H2P12.js","./assets/theme-init.js"];
 const EXTRA = ["./assets/baklava.webp","./assets/baloo-arabic.woff2","./assets/baloo-latin-ext.woff2","./assets/baloo-latin.woff2","./assets/hamza-logo-clear.png","./assets/hamza-logo-header.webp","./assets/hamza.webp","./assets/icon-180.png","./assets/icon-192.png","./assets/icon-48.png","./assets/icon-512.png","./assets/icon-maskable-512.png","./assets/icon-monochrome-512.png","./assets/istanbul-B581LxNd.webp","./assets/istanbul-sunrise-N8vxD-H1.webp","./assets/istanbul-sunrise.webp","./assets/istanbul.webp","./assets/manifest.json","./assets/marhey-arabic.woff2","./assets/marhey-latin-ext.woff2","./assets/marhey-latin.woff2","./assets/silence.wav","./assets/visa-official.pdf"];
 const NETWORK_FIRST = ["./config.json"];
 // قراءة الصور (ت١١): ملفاتها تُحفظ عند أول استعمال لا عند التثبيت، في ذاكرة باسم نسخة المكتبة تبقى بين الإصدارات.
 const OCR_CACHE = "turkey-ocr-7.0.0";
 const OCR_FILE = /^\.\/assets\/(ocr-worker\.|tesseract-core-|tur\.traineddata)/;
+// النطق داخل الجهاز (بايبر): المحرك في ذاكرة باسم نسخته، والأصوات (٦٣ ميغابايت لكل لغة) في ذاكرة ثابتة لا
+// يمسحها أي تحديث؛ يحذفها المستخدم من الإعدادات. كلاهما يُحفظ عند التنزيل أو أول استعمال.
+const TTS_CACHE = "turkey-tts-1.30.0-f4dda3a8";
+const VOICE_CACHE = 'turkey-voices-v1';
+const TTS_FILE = /^\.\/assets\/(tts-worker\.js|ort\.wasm\.min\.js|ort-wasm-simd-threaded\.|piper_phonemize\.)/;
+const VOICE_FILE = /^\.\/voices\/[\w.-]+$/;
 const OWNED = new Set([...CORE, ...EXTRA, ...NETWORK_FIRST]);
 const NETWORK_TIMEOUT_MS = 8000;
 
@@ -60,6 +66,7 @@ self.addEventListener('activate', (event) => {
       for (const key of await caches.keys()) {
         if (key.startsWith('turkey-v2-') && !keep(key)) await caches.delete(key);
         if (key.startsWith('turkey-ocr-') && key !== OCR_CACHE) await caches.delete(key);
+        if (key.startsWith('turkey-tts-') && key !== TTS_CACHE) await caches.delete(key);
       }
       await meta.put(META_KEY, new Response(JSON.stringify({ current: CACHE, previous })));
       await self.clients.claim();
@@ -73,7 +80,11 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
   const path = relativePath(url);
   if (OCR_FILE.test(path)) {
-    event.respondWith(fromOcrCache(request));
+    event.respondWith(fromLazyCache(OCR_CACHE, request));
+    return;
+  }
+  if (TTS_FILE.test(path) || VOICE_FILE.test(path)) {
+    event.respondWith(fromLazyCache(VOICE_FILE.test(path) ? VOICE_CACHE : TTS_CACHE, request));
     return;
   }
   if (!OWNED.has(path)) {
@@ -83,9 +94,9 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(NETWORK_FIRST.includes(path) ? networkFirst(event) : cacheFirst(event));
 });
 
-// تُنزَّل مرة واحدة ثم تعمل دون إنترنت؛ الفشل يصل إلى الصفحة فتقول إن أول قراءة تحتاج اتصالًا.
-async function fromOcrCache(request) {
-  const cache = await caches.open(OCR_CACHE);
+// تُنزَّل مرة واحدة ثم تعمل دون إنترنت؛ الفشل يصل إلى الصفحة فتقول إن أول استعمال يحتاج اتصالًا.
+async function fromLazyCache(name, request) {
+  const cache = await caches.open(name);
   const cached = await cache.match(request, { ignoreSearch: true });
   if (cached) return cached;
   const response = await fetch(request);

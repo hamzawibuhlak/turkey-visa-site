@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./Map-CCbDdpmx.js","./index-DAKKEC78.js","./index-CBII_tbi.css","./Map-CIGW-MKW.css","./VisaForm-BLVPQcpf.js"])))=>i.map(i=>d[i]);
-import{cK as o,b1 as r}from"./index-DAKKEC78.js";const i=o(()=>r(()=>import("./Map-CCbDdpmx.js"),__vite__mapDeps([0,1,2,3]),import.meta.url),{pick:"TripMap",label:"الخريطة"}),t=o(()=>r(()=>import("./VisaForm-BLVPQcpf.js"),__vite__mapDeps([4,1,2]),import.meta.url),{pick:"VisaForm",label:"نموذج التأشيرة"});export{i as T,t as V};
