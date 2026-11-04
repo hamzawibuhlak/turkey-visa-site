@@ -1,8 +1,8 @@
 /* global ort, createPiperPhonemize, importScripts, ArabicVoice */
 // عامل النطق داخل الجهاز (بايبر): نص ← رموز أصوات (eSpeak) ← شبكة عصبية (onnxruntime) ← WAV.
 // العربية تُشكَّل أولًا (libtashkeel)، ولها صوتان: «كريم» من بايبر، و«نبرة» (Kokoro، 24 كيلوهرتز) إن نُزّل.
-// عامل كلاسيكي يُنسخ كما هو عند البناء (scripts/copy-tts.mjs)؛ الملفات تُخدم بلا سياسة أمان للصفحة،
-// فيُسمح فيه بتشغيل WebAssembly. الأصوات من ‎/voices/‎ في البوابة، وعامل الخدمة يخزّنها بعد أول تنزيل.
+// عامل كلاسيكي يُنسخ كما هو عند البناء (scripts/copy-tts.mjs). سفاري يطبّق عليه سياسة أمان الصفحة، فتسمح
+// البوابة بـ wasm-unsafe-eval كي يُترجَم WebAssembly فيه. الأصوات من ‎/voices/‎ في البوابة، وعامل الخدمة يخزّنها بعد أول تنزيل.
 const BASE = new URL('./', self.location.href).href;
 importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js', BASE + 'tts-arabic.js');
 ort.env.wasm.numThreads = 1;
@@ -30,14 +30,19 @@ async function fetchModel(url, report) {
   return data;
 }
 
-async function voice(language, report) {
-  if (loaded[language]) return loaded[language];
+// الوعد نفسه يُحفظ، فطلب نطق يصل أثناء التجهيز المسبق ينتظره ولا يحمّل الصوت (٦٣ ميغابايت) مرة ثانية.
+function voice(language, report) {
   const name = VOICES[language];
-  if (!name) throw new Error('language-unavailable');
-  const config = await (await fetch(voiceUrl(name, '.onnx.json'))).json();
-  const model = await fetchModel(voiceUrl(name, '.onnx'), report);
-  const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
-  loaded[language] = { config, session };
+  if (!name) return Promise.reject(new Error('language-unavailable'));
+  loaded[language] ??= (async () => {
+    const config = await (await fetch(voiceUrl(name, '.onnx.json'))).json();
+    const model = await fetchModel(voiceUrl(name, '.onnx'), report);
+    const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
+    return { config, session };
+  })().catch((e) => {
+    delete loaded[language];
+    throw e;
+  });
   return loaded[language];
 }
 
@@ -80,10 +85,13 @@ function wav(samples, rate) {
 
 // التشكيل: نموذج صغير (نحو ٥ ميغابايت) يُحمَّل عند أول نطق عربي. أي فشل يعيد النص كما هو فلا يتوقف النطق.
 let tashkeel = null;
+const tashkeelSession = () =>
+  (tashkeel ??= fetchModel(voiceUrl('libtashkeel', '.onnx'), () => {}).then((model) =>
+    ort.InferenceSession.create(model, { executionProviders: ['wasm'] }),
+  ));
 async function diacritize(text) {
   try {
-    tashkeel ??= ort.InferenceSession.create(await fetchModel(voiceUrl('libtashkeel', '.onnx'), () => {}), { executionProviders: ['wasm'] });
-    const session = await tashkeel;
+    const session = await tashkeelSession();
     const { charIds, hintIds } = ArabicVoice.prepareTashkeel(text);
     if (!charIds.length) return text;
     const tensor = (values) => new ort.Tensor('int64', BigInt64Array.from(values.map(BigInt)), [1, values.length]);
@@ -157,6 +165,8 @@ self.onmessage = async ({ data }) => {
   try {
     if (type === 'prepare') {
       await (data.voice === 'nabra' ? nabraVoice(report) : voice(data.language, report));
+      // التجهيز المسبق للعربية يحمّل نموذج التشكيل أيضًا، فلا تنتظره أول جملة.
+      if (data.language === 'ar') await tashkeelSession().catch(() => (tashkeel = null));
       self.postMessage({ id, type: 'done' });
       return;
     }
