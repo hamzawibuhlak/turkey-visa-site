@@ -7,7 +7,7 @@ importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js');
 ort.env.wasm.numThreads = 1;
 ort.env.wasm.wasmPaths = BASE;
 
-const VOICES = { ar: 'ar_JO-kareem-medium', tr: 'tr_TR-dfki-medium' };
+const VOICES = { ar: 'ar_JO-kareem-medium', tr: 'tr_TR-dfki-medium', en: 'en_US-lessac-medium' };
 const voiceUrl = (name, ext) => new URL(`../voices/${name}${ext}`, BASE).href;
 const loaded = {};
 
