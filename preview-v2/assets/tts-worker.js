@@ -1,16 +1,15 @@
-/* global ort, createPiperPhonemize, importScripts, ArabicVoice */
+/* global ort, createPiperPhonemize, importScripts, ArabicVoice, SessionPool */
 // عامل النطق داخل الجهاز (بايبر): نص ← رموز أصوات (eSpeak) ← شبكة عصبية (onnxruntime) ← WAV.
 // العربية تُشكَّل أولًا (libtashkeel)، ولها صوتان: «كريم» من بايبر، و«نبرة» (Kokoro، 24 كيلوهرتز) إن نُزّل.
 // عامل كلاسيكي يُنسخ كما هو عند البناء (scripts/copy-tts.mjs). سفاري يطبّق عليه سياسة أمان الصفحة، فتسمح
 // البوابة بـ wasm-unsafe-eval كي يُترجَم WebAssembly فيه. الأصوات من ‎/voices/‎ في البوابة، وعامل الخدمة يخزّنها بعد أول تنزيل.
 const BASE = new URL('./', self.location.href).href;
-importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js', BASE + 'tts-arabic.js');
+importScripts(BASE + 'ort.wasm.min.js', BASE + 'piper_phonemize.js', BASE + 'tts-arabic.js', BASE + 'tts-pool.js');
 ort.env.wasm.numThreads = 1;
 ort.env.wasm.wasmPaths = BASE;
 
 const VOICES = { ar: 'ar_JO-kareem-medium', tr: 'tr_TR-dfki-medium', en: 'en_US-lessac-medium' };
 const voiceUrl = (name, ext) => new URL(`../voices/${name}${ext}`, BASE).href;
-const loaded = {};
 
 async function fetchModel(url, report) {
   const response = await fetch(url);
@@ -30,20 +29,27 @@ async function fetchModel(url, report) {
   return data;
 }
 
-// الوعد نفسه يُحفظ، فطلب نطق يصل أثناء التجهيز المسبق ينتظره ولا يحمّل الصوت (٦٣ ميغابايت) مرة ثانية.
-function voice(language, report) {
-  const name = VOICES[language];
-  if (!name) return Promise.reject(new Error('language-unavailable'));
-  loaded[language] ??= (async () => {
+// جلسة النموذج من مصفوفة البايتات؛ المصفوفة لا تُحفظ بعدها، فتُجمع بمجرد أن تنسخها onnxruntime إلى كومتها.
+const sessionFrom = (model) => ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
+
+// أصوات بايبر و«نبرة» في ذاكرة واحدة بحدّ جلستين (tts-pool.js، CODE-10). report لمن طلب التحميل أولًا،
+// وطلب يصل أثناء التحميل ينتظره ولا يحمّل الصوت (٦٣ ميغابايت) مرة ثانية.
+const models = SessionPool.createSessionPool({
+  load: async (key, report = () => {}) => {
+    if (key === 'nabra') {
+      const session = await sessionFrom(await fetchModel(voiceUrl('nabra-82m.int8', '.onnx'), report));
+      const voices = new Float32Array(await (await fetch(voiceUrl('nabra-voices', '.bin'))).arrayBuffer());
+      return { session, voices };
+    }
+    const name = VOICES[key];
     const config = await (await fetch(voiceUrl(name, '.onnx.json'))).json();
-    const model = await fetchModel(voiceUrl(name, '.onnx'), report);
-    const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
+    const session = await sessionFrom(await fetchModel(voiceUrl(name, '.onnx'), report));
     return { config, session };
-  })().catch((e) => {
-    delete loaded[language];
-    throw e;
-  });
-  return loaded[language];
+  },
+});
+function withModel(key, report, run) {
+  if (key !== 'nabra' && !VOICES[key]) return Promise.reject(new Error('language-unavailable'));
+  return models.use(key, run, report);
 }
 
 // رموز eSpeak للنص: phoneme_ids لبايبر، وphonemes (IPA) لـ«نبرة».
@@ -54,7 +60,9 @@ function phonemize(text, espeakVoice) {
       printErr: (message) => reject(new Error(message)),
       locateFile: (file) => BASE + file,
     })
-      .then((module) => module.callMain(['-l', espeakVoice, '--input', JSON.stringify([{ text }]), '--espeak_data', '/espeak-ng-data']))
+      .then((module) =>
+        module.callMain(['-l', espeakVoice, '--input', JSON.stringify([{ text }]), '--espeak_data', '/espeak-ng-data']),
+      )
       .catch(reject);
   });
 }
@@ -85,10 +93,8 @@ function wav(samples, rate) {
 
 // التشكيل: نموذج صغير (نحو ٥ ميغابايت) يُحمَّل عند أول نطق عربي. أي فشل يعيد النص كما هو فلا يتوقف النطق.
 let tashkeel = null;
-const tashkeelSession = () =>
-  (tashkeel ??= fetchModel(voiceUrl('libtashkeel', '.onnx'), () => {}).then((model) =>
-    ort.InferenceSession.create(model, { executionProviders: ['wasm'] }),
-  ));
+// خارج حدّ الجلستين: صغير، وكل نطق عربي يحتاجه.
+const tashkeelSession = () => (tashkeel ??= fetchModel(voiceUrl('libtashkeel', '.onnx'), () => {}).then(sessionFrom));
 async function diacritize(text) {
   try {
     const session = await tashkeelSession();
@@ -110,22 +116,8 @@ async function diacritize(text) {
 // «نبرة»: النموذج (83 ميغابايت، int8) ومتجهات الأسلوب من ‎/voices/‎، والصوت بقطع لا تتجاوز حد النموذج.
 const NABRA_RATE = 24000;
 const NABRA_GAP = Math.round(NABRA_RATE * 0.15);
-let nabra = null;
-async function nabraVoice(report) {
-  nabra ??= (async () => {
-    const model = await fetchModel(voiceUrl('nabra-82m.int8', '.onnx'), report);
-    const voices = new Float32Array(await (await fetch(voiceUrl('nabra-voices', '.bin'))).arrayBuffer());
-    const session = await ort.InferenceSession.create(model, { executionProviders: ['wasm'] });
-    return { session, voices };
-  })().catch((e) => {
-    nabra = null;
-    throw e;
-  });
-  return nabra;
-}
 
-async function speakNabra(text, rate, report) {
-  const { session, voices } = await nabraVoice(report);
+async function speakNabra({ session, voices }, text, rate) {
   const { phonemes = [] } = await phonemize(text, 'ar');
   const parts = [];
   for (const chunk of ArabicVoice.nabraChunks(phonemes.join(''))) {
@@ -143,10 +135,7 @@ async function speakNabra(text, rate, report) {
   return wav(samples, NABRA_RATE);
 }
 
-async function speak({ text, language, rate, voice: choice }, report) {
-  const spoken = language === 'ar' ? await diacritize(text.trim()) : text.trim();
-  if (language === 'ar' && choice === 'nabra') return speakNabra(spoken, rate, report);
-  const { config, session } = await voice(language, report);
+async function speakPiper({ config, session }, spoken, rate) {
   const ids = (await phonemize(spoken, config.espeak.voice)).phoneme_ids;
   const { noise_scale: noise, length_scale: length, noise_w: noiseW } = config.inference;
   const feeds = {
@@ -159,12 +148,18 @@ async function speak({ text, language, rate, voice: choice }, report) {
   return wav(output.data, config.audio.sample_rate);
 }
 
+async function speak({ text, language, rate, voice: choice }, report) {
+  const spoken = language === 'ar' ? await diacritize(text.trim()) : text.trim();
+  if (language === 'ar' && choice === 'nabra') return withModel('nabra', report, (m) => speakNabra(m, spoken, rate));
+  return withModel(language, report, (m) => speakPiper(m, spoken, rate));
+}
+
 self.onmessage = async ({ data }) => {
   const { id, type } = data;
   const report = (progress) => self.postMessage({ id, type: 'progress', progress });
   try {
     if (type === 'prepare') {
-      await (data.voice === 'nabra' ? nabraVoice(report) : voice(data.language, report));
+      await withModel(data.voice === 'nabra' ? 'nabra' : data.language, report, () => undefined);
       // التجهيز المسبق للعربية يحمّل نموذج التشكيل أيضًا، فلا تنتظره أول جملة.
       if (data.language === 'ar') await tashkeelSession().catch(() => (tashkeel = null));
       self.postMessage({ id, type: 'done' });
