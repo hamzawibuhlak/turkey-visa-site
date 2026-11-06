@@ -54,21 +54,21 @@
   "categories": ["travel", "navigation", "utilities"],
   "screenshots": [
     {
-      "src": "../screenshots/home.webp",
+      "src": "screenshot-home.webp",
       "sizes": "780x1688",
       "type": "image/webp",
       "form_factor": "narrow",
       "label": "الرئيسية: الوقت والطقس في إسطنبول وخطة رحلتك"
     },
     {
-      "src": "../screenshots/explore.webp",
+      "src": "screenshot-explore.webp",
       "sizes": "780x1688",
       "type": "image/webp",
       "form_factor": "narrow",
       "label": "استكشف أماكن إسطنبول المختارة"
     },
     {
-      "src": "../screenshots/translate.webp",
+      "src": "screenshot-translate.webp",
       "sizes": "780x1688",
       "type": "image/webp",
       "form_factor": "narrow",
