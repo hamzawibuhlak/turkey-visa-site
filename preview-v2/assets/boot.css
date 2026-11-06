@@ -1,19 +1,19 @@
 /* شاشة الإقلاع: تظهر قبل أي شيفرة، وتستبدلها React عند أول عرض. ملف مستقل لأن سياسة الأمان في البوابة تمنع الأنماط المضمّنة. */
 /* الملف نفسه المحمَّل مسبقًا في index.html، فلا طلب إضافي. */
 @font-face {
-  font-family: 'Baloo Bhaijaan 2';
-  font-weight: 400 800;
+  font-family: 'Readex Pro';
+  font-weight: 160 700;
   font-display: swap;
-  src: url('./baloo-arabic.woff2') format('woff2');
+  src: url('./readex-arabic.woff2') format('woff2');
   unicode-range: U+0600-06FF, U+0750-077F, U+200C-200E;
 }
 html {
-  background: #f4efe7;
-  color: #14213b;
+  background: #f2f7fb;
+  color: #0c2a45;
 }
 html[data-theme='dark'] {
-  background: #0a1422;
-  color: #f5f1ea;
+  background: #08172a;
+  color: #eef4fa;
 }
 body {
   margin: 0;
@@ -25,7 +25,7 @@ body {
   place-content: center;
   justify-items: center;
   gap: 12px;
-  font: 700 1.125rem/1.4 'Baloo Bhaijaan 2', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font: 700 1.125rem/1.4 'Readex Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 .boot img {
   display: block;

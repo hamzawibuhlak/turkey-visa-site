@@ -1,33 +1,33 @@
 /* صفحة سياسة الخصوصية: صفحة ثابتة مستقلة عن التطبيق، بخط الدليل وألوانه، فاتحة وداكنة. */
 @font-face {
-  font-family: 'Baloo Bhaijaan 2';
-  src: url('baloo-arabic.woff2') format('woff2');
+  font-family: 'Readex Pro';
+  src: url('readex-arabic.woff2') format('woff2');
   font-display: swap;
   unicode-range: U+0600-06FF, U+0750-077F, U+200C-200F, U+FB50-FDFF, U+FE70-FEFF;
 }
 @font-face {
-  font-family: 'Baloo Bhaijaan 2';
-  src: url('baloo-latin.woff2') format('woff2');
+  font-family: 'Readex Pro';
+  src: url('readex-latin.woff2') format('woff2');
   font-display: swap;
   unicode-range: U+0000-00FF, U+2000-206F;
 }
 :root {
-  --bg: #f6f3ee;
+  --bg: #f2f7fb;
   --panel: #ffffff;
-  --ink: #1b2333;
+  --ink: #0c2a45;
   --muted: #5b6475;
-  --accent: #c8102e;
-  --rule: #e3dfd8;
+  --accent: #0b528f;
+  --rule: #d6e2ee;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1726;
-    --panel: #172235;
+    --bg: #08172a;
+    --panel: #0f2339;
     --ink: #eef1f6;
     --muted: #a9b2c3;
-    --accent: #ff5a6e;
-    --rule: #26344c;
+    --accent: #8cc4f5;
+    --rule: #22405f;
   }
 }
 * { box-sizing: border-box; }
@@ -35,7 +35,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 1rem/1.9 'Baloo Bhaijaan 2', system-ui, sans-serif;
+  font: 400 1rem/1.9 'Readex Pro', system-ui, sans-serif;
 }
 main {
   max-width: 760px;
