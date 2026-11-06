@@ -51,6 +51,11 @@
       "url": "../expenses.html"
     }
   ],
+  "share_target": {
+    "action": "../trips.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
   "categories": ["travel", "navigation", "utilities"],
   "screenshots": [
     {
