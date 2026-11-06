@@ -1,4 +1,4 @@
-import{_ as l}from"./index-D70clYun.js";const s="./assets/",h=1600,m=1;function d(e,t,a=h){const r=Math.min(1,a/Math.max(e,t));return{width:Math.round(e*r),height:Math.round(t*r)}}function f(e){for(let t=0;t<e.length;t+=4){const a=Math.round(.299*e[t]+.587*e[t+1]+.114*e[t+2]);e[t]=a,e[t+1]=a,e[t+2]=a}return e}function w(e=""){return e.split(`
+import{_ as l}from"./index-oAPO3g4V.js";const s="./assets/",h=1600,m=1;function d(e,t,a=h){const r=Math.min(1,a/Math.max(e,t));return{width:Math.round(e*r),height:Math.round(t*r)}}function f(e){for(let t=0;t<e.length;t+=4){const a=Math.round(.299*e[t]+.587*e[t+1]+.114*e[t+2]);e[t]=a,e[t+1]=a,e[t+2]=a}return e}function w(e=""){return e.split(`
 `).map(t=>t.replace(/\s+/g," ").trim()).filter(t=>new RegExp("\\p{L}{2,}","u").test(t)).join(`
 `)}function g(e=""){return e.split(`
 `).map(t=>t.replace(/\s+/g," ").trim()).filter(t=>new RegExp("\\p{L}{2,}|\\d","u").test(t)).join(`
