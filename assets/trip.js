@@ -115,7 +115,7 @@
   }
 
   function show(root, trip) {
-    document.title = trip.name + ' | دليل حمزة في تركيا';
+    document.title = trip.name + ' | وين السفرة؟';
     var head = el('section', 'trip-head');
     head.append(el('h1', '', trip.name));
     if (trip.from && trip.to) {

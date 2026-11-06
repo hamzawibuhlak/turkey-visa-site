@@ -1,6 +1,6 @@
 # Public Pages deployment
 # GitHub's branch build also publishes main and usually finishes last, so any
-# generated file must be committed too: og-*-final-v3.jpg live in the repo root.
+# generated file must be committed too: og-*-final-v4.jpg live in the repo root.
 name: Deploy public site
 on:
   push:
@@ -25,9 +25,9 @@ jobs:
           if [ -d preview-v2 ]; then cp -R preview-v2 _site/; fi
           sudo apt-get update -qq
           sudo apt-get install -y -qq imagemagick >/dev/null
-          convert og-home-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-home-final-v3.jpg
-          convert og-istanbul-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-istanbul-final-v3.jpg
-          convert og-visa-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-visa-final-v3.jpg
+          convert og-home-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-home-final-v4.jpg
+          convert og-istanbul-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-istanbul-final-v4.jpg
+          convert og-visa-final.png -resize 1200x630! -strip -interlace none -sampling-factor 4:2:0 -quality 82 _site/og-visa-final-v4.jpg
       - uses: actions/configure-pages@v5
         with:
           enablement: true
