@@ -1,1 +1,0 @@
-const s=["food","accommodation","transport","shopping","activities","flights","internet","fees"];function n(o){const t=s.indexOf(o);return t<0?"var(--ds-cat-rest)":`var(--ds-cat-${t+1})`}export{n as c};
