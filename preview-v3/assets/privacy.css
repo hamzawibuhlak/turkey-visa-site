@@ -1,0 +1,69 @@
+/* صفحة سياسة الخصوصية: صفحة ثابتة مستقلة عن التطبيق، بخط الدليل وألوانه، فاتحة وداكنة. */
+@font-face {
+  font-family: 'Readex Pro';
+  src: url('readex-arabic.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+200C-200F, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'Readex Pro';
+  src: url('readex-latin.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+2000-206F;
+}
+:root {
+  --bg: #f2f7fb;
+  --panel: #ffffff;
+  --ink: #0c2a45;
+  --muted: #5b6475;
+  --accent: #0b528f;
+  --rule: #d6e2ee;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #08172a;
+    --panel: #0f2339;
+    --ink: #eef1f6;
+    --muted: #a9b2c3;
+    --accent: #8cc4f5;
+    --rule: #22405f;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 1rem/1.9 'Readex Pro', system-ui, sans-serif;
+}
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+header { margin-block-end: 8px; }
+h1 { font-size: 1.75rem; margin: 12px 0 0; }
+h2 { font-size: 1.2rem; margin: 0 0 8px; }
+.meta { color: var(--muted); font-size: 0.875rem; margin: 0; }
+.back { display: inline-block; min-block-size: 44px; line-height: 44px; }
+a { color: var(--accent); }
+section {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 18px;
+  margin-block-start: 14px;
+}
+section p, section ul { margin: 0 0 10px; }
+ul { padding-inline-start: 20px; }
+p[lang='en'] { color: var(--muted); font-size: 0.875rem; text-align: left; }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th, td { text-align: start; padding: 8px 6px; border-block-end: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+td:nth-child(2) { unicode-bidi: isolate; white-space: nowrap; }
+@media (max-width: 520px) {
+  thead { display: none; }
+  tr { display: grid; padding: 8px 0; border-block-end: 1px solid var(--rule); }
+  td { border: 0; padding: 2px 0; white-space: normal; }
+  td:first-child { font-weight: 600; }
+}

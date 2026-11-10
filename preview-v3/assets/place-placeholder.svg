@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+  <!-- بديل صورة المكان (BRAND-14): نمط مجرّد بألوان «بحر إيجه» بدل تكرار صورة البطل. شمس مرجانية فوق موج أزرق. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dcebf8"/>
+      <stop offset="1" stop-color="#b9d6ef"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#sky)"/>
+  <circle cx="290" cy="112" r="46" fill="#c4441f" opacity=".85"/>
+  <path d="M0 170 Q50 150 100 170 T200 170 T300 170 T400 170 V300 H0Z" fill="#2f80c9"/>
+  <path d="M0 205 Q50 185 100 205 T200 205 T300 205 T400 205 V300 H0Z" fill="#0d5fa6"/>
+  <path d="M0 240 Q50 220 100 240 T200 240 T300 240 T400 240 V300 H0Z" fill="#0a4a85"/>
+</svg>
