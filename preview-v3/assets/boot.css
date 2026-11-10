@@ -1,0 +1,36 @@
+/* شاشة الإقلاع: تظهر قبل أي شيفرة، وتستبدلها React عند أول عرض. ملف مستقل لأن سياسة الأمان في البوابة تمنع الأنماط المضمّنة. */
+/* الملف نفسه المحمَّل مسبقًا في index.html، فلا طلب إضافي. */
+/* طبقة boot الأضعف؛ ترتيب الطبقات كله يُعلن هنا لأن هذا الملف يصل قبل غيره (scripts/css-layers.mjs). */
+@layer boot, base, app, device;
+@layer boot {
+  @font-face {
+    font-family: 'Readex Pro';
+    font-weight: 160 700;
+    font-display: swap;
+    src: url('./readex-arabic.woff2') format('woff2');
+    unicode-range: U+0600-06FF, U+0750-077F, U+200C-200E;
+  }
+  html {
+    background: #f2f7fb;
+    color: #0c2a45;
+  }
+  html[data-theme='dark'] {
+    background: #08172a;
+    color: #eef4fa;
+  }
+  body {
+    margin: 0;
+  }
+  .boot {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    font: 700 1.125rem/1.4 'Readex Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  .boot img {
+    display: block;
+  }
+}
