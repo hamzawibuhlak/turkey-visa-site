@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./Map-GwHYwRpb.js","./index-ba8v7oO4.js","./index-DC7MlxDq.css","./Map-CXj_FFHH.css","./VisaForm-Pf9hudq-.js","./ArrowRight.es-B442NyW9.js","./index-B1WCJkZi.js"])))=>i.map(i=>d[i]);
-import{l as o,_ as r}from"./index-ba8v7oO4.js";const i=o(()=>r(()=>import("./Map-GwHYwRpb.js"),__vite__mapDeps([0,1,2,3]),import.meta.url),{pick:"TripMap",label:"الخريطة"}),t=o(()=>r(()=>import("./VisaForm-Pf9hudq-.js"),__vite__mapDeps([4,1,2,5,6]),import.meta.url),{pick:"VisaForm",label:"نموذج التأشيرة"});export{i as T,t as V};
