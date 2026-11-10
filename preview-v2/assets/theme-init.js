@@ -9,7 +9,7 @@
     var theme = dark ? 'dark' : 'light';
     document.documentElement.dataset.theme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f8fc' : '#101d30');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f8fc' : '#0b132b');
   } catch (e) {
     // التخزين محجوب: يبقى المظهر الافتراضي حتى يطبّقه التطبيق.
   }
